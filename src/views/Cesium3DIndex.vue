@@ -4,14 +4,13 @@
 <script lang="ts">
 declare const GController: any
 import { defineComponent, onBeforeMount, nextTick } from 'vue'
-export default {
+export default defineComponent({
   name: 'Cesium3DIndex',
   components: {},
   setup() {
     const initMap = () => {
-      GController.init(process.env).then((viewer: any) => {
-        console.log(viewer)
-      })
+      const viewer:any = GController.init(process.env)
+      console.log(viewer)
     }
     onBeforeMount(() => {
       nextTick(() => {
@@ -20,5 +19,5 @@ export default {
     })
     return {}
   },
-}
+})
 </script>
