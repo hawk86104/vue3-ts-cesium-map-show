@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "strict": true,
+    "strict": false,  // 强检查
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
@@ -12,6 +12,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "noImplicitAny": false, // 忽略未定
     "types": [
       "webpack-env"
     ],
@@ -24,7 +25,8 @@
       "esnext",
       "dom",
       "dom.iterable",
-      "scripthost"
+      "scripthost",
+      "es5", "es6",
     ]
   },
   "include": [

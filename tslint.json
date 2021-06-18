@@ -1,0 +1,43 @@
+{
+  "defaultSeverity": "warning",
+  "extends": ["tslint:recommended"],
+  "linterOptions": {
+    "exclude": ["node_modules/**","package.json"]
+  },
+  "rules": {
+//允许使用按位运算符
+    "no-bitwise": false,
+//强制引用时必须使用单引号
+    "quotemark": [true, "single"],
+//每行以2个空格符开始
+    "indent": [true, "spaces", 2],
+//声明interface是否需要首字母为大写的I
+    "interface-name": false,
+//不需要按字母顺序引入模块
+    "ordered-imports": false,
+//检查对象 key 的声明顺序
+    "object-literal-sort-keys": false,
+//
+    "no-consecutive-blank-lines": false,
+// 箭头函数定义的参数不需要括号
+    "arrow-parens": false,
+//对尾随逗号的校验
+    "trailing-comma": [
+      true,
+      {
+        "multiline": {
+          "objects": "ignore",
+          "arrays": "never",
+          "functions": "never",
+          "typeLiterals": "ignore"
+        },
+//是否允许尾随逗号出现在剩余变量中
+        "esSpecCompliant": true
+      }
+    ],
+// 允许使用console的类型
+    "no-console": [false, "log", "info", "error"],
+// 指定类成员的排序规则
+    "member-ordering": false
+  }
+}
