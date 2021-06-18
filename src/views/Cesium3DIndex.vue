@@ -1,29 +1,24 @@
 <template>
-  <div class="Cesium3DIndex" id="cesiumContainer">
-  </div>
+  <div class="Cesium3DIndex" id="cesiumContainer"></div>
 </template>
 <script lang="ts">
-declare const GController;
-import {
-  defineComponent,
-  onBeforeMount,
-  nextTick
-} from 'vue';
+declare const GController: any
+import { defineComponent, onBeforeMount, nextTick } from 'vue'
 export default {
   name: 'Cesium3DIndex',
   components: {},
   setup() {
     const initMap = () => {
       GController.init(process.env).then((viewer: any) => {
-        console.log(viewer);
-      });
-    };
+        console.log(viewer)
+      })
+    }
     onBeforeMount(() => {
       nextTick(() => {
-        initMap();
-      });
-    });
-    return {};
+        initMap()
+      })
+    })
+    return {}
   },
-};
+}
 </script>
