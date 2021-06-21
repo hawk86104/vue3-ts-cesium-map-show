@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 /* eslint-disable no-undef */
 class Controller {
   // 初始化 controller 类
@@ -7,9 +8,9 @@ class Controller {
   init_data() {
     this.viewer = null
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  init(env) {
+  init(BaseMapConfig) {
     const mapID = 'cesiumContainer'
+    debugger
     const viewer = new Cesium.Viewer(mapID, {
       // 加载单张影像 第一层最小最透明的
       imageryProvider: new Cesium.UrlTemplateImageryProvider ({
@@ -23,18 +24,22 @@ class Controller {
           alpha: false,
         },
       },
-      baseLayerPicker: false, // 基础影响图层选择器
-      navigationHelpButton: false, // 导航帮助按钮
-      animation: false, // 动画控件
-      timeline: false, // 时间控件
-      shadows: false, // 显示阴影
-      shouldAnimate: true, // 模型动画效果 大气
-      skyBox: false, // 天空盒
-      enableInfoBox: false,
-      infoBox: false,
-      fullscreenButton: false, // 是否显示全屏按钮 
+      baseLayerPicker: BaseMapConfig['map_config_baseLayerPicker'] ? BaseMapConfig['map_config_baseLayerPicker'].value === '1' : false, // 基础影响图层选择器
+      navigationHelpButton: BaseMapConfig['map_config_navigationHelpButton'] ? BaseMapConfig['map_config_navigationHelpButton'].value === '1' : false, // 导航帮助按钮
+      animation: BaseMapConfig['map_config_animation'] ? BaseMapConfig['map_config_animation'].value === '1' : false, // 动画控件
+      timeline: BaseMapConfig['map_config_timeline'] ? BaseMapConfig['map_config_timeline'].value === '1' : false, // 时间控件
+      shadows: BaseMapConfig['map_config_shadows'] ? BaseMapConfig['map_config_shadows'].value === '1' : false, // 显示阴影
+      shouldAnimate: BaseMapConfig['map_config_shouldAnimate'] ? BaseMapConfig['map_config_shouldAnimate'].value === '1' : false, // 模型动画效果 大气
+      skyBox: BaseMapConfig['map_config_skyBox'] ? BaseMapConfig['map_config_skyBox'].value === '1' : false, // 天空盒
+      infoBox: BaseMapConfig['map_config_infoBox'] ? BaseMapConfig['map_config_infoBox'].value === '1' : false,
+      fullscreenButton: BaseMapConfig['map_config_fullscreenButton'] ? BaseMapConfig['map_config_fullscreenButton'].value === '1' : false, // 是否显示全屏按钮 
+      homeButton: BaseMapConfig['map_config_homeButton'] ? BaseMapConfig['map_config_homeButton'].value === '1' : false, // 是否显示首页按钮 
+      geocoder: false, // 默认不显示搜索栏地址
+      sceneModePicker: BaseMapConfig['map_config_sceneModePicker'] ? BaseMapConfig['map_config_sceneModePicker'].value === '1' : false, // 是否显示视角切换按钮
     })
-    viewer._cesiumWidget._creditContainer.style.display = 'none' // 影藏logo
+    if (BaseMapConfig['map_config_logo'] && BaseMapConfig['map_config_logo'].value === '0') {
+      viewer._cesiumWidget._creditContainer.style.display = 'none' // 影藏logo
+    }
 
     // 增加图层
     // const imageryLayers = viewer.imageryLayers

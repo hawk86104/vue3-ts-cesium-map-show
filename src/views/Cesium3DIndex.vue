@@ -3,29 +3,40 @@
 </template>
 <script lang="ts">
 declare const GController: any
+
 import { defineComponent, onBeforeMount, nextTick } from 'vue'
 import { getMapConfig } from '@/api/base'
+import { zipObject, map, pick } from 'lodash'
+
 export default defineComponent({
   name: 'Cesium3DIndex',
   components: {},
   setup() {
-    const initMap = () => {
-      const viewer:any = GController.init(process.env)
+    const initMap = (BaseMapConfig) => {
+      const viewer:any = GController.init(BaseMapConfig)
       console.log(viewer)
     }
     const getBaseMapConfig = async () => {
-      const res = await getMapConfig()
-      console.log(res)
-      // eslint-disable-next-line no-debugger
-      debugger
+      let res:any = await getMapConfig()
+      res = res.data
+      res = zipObject(
+        map(res, 'name'), res
+      )
+      return res
     }
     onBeforeMount(() => {
-      nextTick(() => {
-        // initMap()
-        getBaseMapConfig()
+      nextTick(async () => {
+        const BaseMapConfig:any = await getBaseMapConfig()
+        initMap(BaseMapConfig)
       })
     })
     return {}
   },
 })
 </script>
+
+<style lang="scss">
+.Cesium3DIndex {
+  height: 100%;
+}
+</style>
