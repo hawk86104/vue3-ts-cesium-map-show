@@ -48,7 +48,7 @@ module.exports = {
     'consistent-this': ['error', '_this'],
     'max-depth': ['error', 5],
     'max-lines': ['error', 800],
-    'no-multi-str': 'error',
+    'no-multi-str': 'off',
     'space-infix-ops': 'error',
     'space-before-blocks': ['error', 'always'],
     'space-before-function-paren': ['error', {

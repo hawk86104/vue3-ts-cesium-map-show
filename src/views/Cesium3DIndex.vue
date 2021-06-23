@@ -3,8 +3,7 @@
 </template>
 <script lang="ts">
 /* eslint-disable no-debugger */
-declare const GController: any
-
+import { GController } from '@/utils/ctrlCesium/Controller'
 import { defineComponent, onBeforeMount, nextTick } from 'vue'
 import { getMapConfig, getMapImageryList } from '@/api/base'
 import { zipObject, map, forIn} from 'lodash'
@@ -13,7 +12,7 @@ export default defineComponent({
   name: 'Cesium3DIndex',
   components: {},
   setup() {
-    const initMap = (BaseMapConfig, MapImageryList) => {
+    const initMap = (BaseMapConfig:any, MapImageryList:any) => {
       const viewer:any = GController.init(BaseMapConfig, MapImageryList)
       console.log(viewer)
     }
@@ -23,7 +22,7 @@ export default defineComponent({
       res = zipObject(
         map(res, 'name'), map(res, 'value')
       )
-      forIn(res, (value, index) => {
+      forIn(res, (value:any, index:any) => {
         res[index] = value === '1'
       })
       return res
@@ -31,7 +30,7 @@ export default defineComponent({
     const getBaseMapImageryList = async () => {
       let res:any = await getMapImageryList()
       res = res.data
-      res.some((elem, index) => {
+      res.some((elem:any, index:any) => {
         res[index].classConfig = JSON.parse(elem.classConfig)
         res[index].interfaceConfig = JSON.parse(elem.interfaceConfig)
         forIn(res[index].interfaceConfig, (v:any, i:any) => {
