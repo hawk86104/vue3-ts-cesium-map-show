@@ -1,5 +1,8 @@
-declare const Cesium:any
-// import * as Cesium from 'cesium'
+/* eslint no-multi-str: "off" */
+/* eslint-disable no-debugger */
+declare const Cesium: any
+// import Cesium from './Cesium'
+import { colorRgb } from '@/utils/color'
 
 class Controller {
   // 初始化 controller 类
@@ -52,8 +55,6 @@ class Controller {
 
     // 增加配置图层
     this.setConfigMapList(viewer, MapImageryList)
-    // 增加底图的配色方案
-    this.changeImageryProviderColors(viewer)
     // 消除锯齿
     this.removeJagged(viewer)
     this.viewer = viewer
@@ -69,13 +70,19 @@ class Controller {
     })
     // 设置具体的 ImageryLayer 参数
     MapImageryList.some((elem: any, index: number) => {
+      const baseLayer = viewer.imageryLayers.get(index)
       if (elem.interfaceConfig) {
-        const baseLayer = viewer.imageryLayers.get(index)
         Object.getOwnPropertyNames(elem.interfaceConfig).forEach(function(
           key
         ) {
           baseLayer[key] = elem.interfaceConfig[key]
         })
+      }
+      // 设置 滤镜效果
+      baseLayer.invertColor = elem.invertswitch
+      baseLayer.filterRGB = [255.0, 255.0, 255.0]
+      if (elem.filterRGB !== '#000000' && elem.filterRGB !== '#ffffff') {
+        baseLayer.filterRGB = colorRgb(elem.filterRGB)
       }
     })
   }
@@ -99,20 +106,13 @@ class Controller {
     const baseFragmentShaderSource =
       viewer.scene.globe._surfaceShaderSet.baseFragmentShaderSource.sources
     for (let i = 0; i < baseFragmentShaderSource.length; i++) {
+      debugger
       const oneSource = baseFragmentShaderSource[i]
       // 格式必须一致 不能多有空格 且保持版本一致性
       const strS = 'gl_FragColor = finalColor;\n\
 }\n\
 #ifdef GROUND_ATMOSPHERE\n'
-      const strT =
-        '   finalColor.r = 1.0 - finalColor.r;\n\
-            finalColor.g = 1.0 - finalColor.g;\n\
-            finalColor.b = 1.0 - finalColor.b;\n\
-            finalColor.r = finalColor.r * 78.0/255.0;\n\
-            finalColor.g = finalColor.g * 112.0/255.0;\n\
-            finalColor.b = finalColor.b * 166.0/255.0;\n\
-        ' +
-        strS
+      const strT = strS
       if (oneSource.indexOf(strS) !== -1) {
         baseFragmentShaderSource[i] = baseFragmentShaderSource[i].replace(
           strS,

@@ -14,7 +14,8 @@
     "baseUrl": ".",
     "noImplicitAny": false, // 忽略未定
     "types": [
-      "webpack-env"
+      "webpack-env",
+      "cesium"
     ],
     "paths": {
       "@/*": [
