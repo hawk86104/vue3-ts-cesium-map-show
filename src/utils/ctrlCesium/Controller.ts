@@ -3,6 +3,7 @@
 declare const Cesium: any
 // import Cesium from './Cesium'
 import { colorRgb } from '@/utils/color'
+import { evil } from '@/utils/common'
 
 class Controller {
   // 初始化 controller 类
@@ -19,9 +20,7 @@ class Controller {
       url: './Cesium-1.82/background.png',
     })
     if (MapImageryList.length !== 0) {
-      imageryProviderConfig = new Cesium[MapImageryList[0].type](
-        MapImageryList[0].classConfig
-      )
+      imageryProviderConfig = this.setOneimageryProvider(MapImageryList[0])
     }
     let vConfig = {
       // 加载单张影像 第一层最小最透明的
@@ -60,13 +59,21 @@ class Controller {
     this.viewer = viewer
     return viewer
   }
+  setOneimageryProvider(MapImagery: any): any {
+    if (MapImagery.classConfig.customTags) {
+      MapImagery.classConfig.customTags = evil(
+        '(' + MapImagery.classConfig.customTags + ')'
+      )
+    }
+    return new Cesium[MapImagery.type](MapImagery.classConfig)
+  }
   setConfigMapList(viewer: any, MapImageryList: any) {
     const imageryLayers = viewer.imageryLayers
     MapImageryList.some((elem: any, index: number) => {
       if (index === 0) {
         return false
       }
-      imageryLayers.addImageryProvider(new Cesium[elem.type](elem.classConfig))
+      imageryLayers.addImageryProvider(this.setOneimageryProvider(elem))
     })
     // 设置具体的 ImageryLayer 参数
     MapImageryList.some((elem: any, index: number) => {
@@ -83,6 +90,22 @@ class Controller {
       baseLayer.filterRGB = [255.0, 255.0, 255.0]
       if (elem.filterRGB !== '#000000' && elem.filterRGB !== '#ffffff') {
         baseLayer.filterRGB = colorRgb(elem.filterRGB)
+      }
+
+      // 设置 offset 偏移量
+      const offset: Array<string> = elem.offset.split(',')
+      if (offset.length === 2) {
+        try {
+          const oxy: Array<number> = [
+            parseFloat(offset[0]),
+            parseFloat(offset[1])
+          ]
+          baseLayer._imageryProvider._tilingScheme._rectangleNortheastInMeters.x += oxy[0]
+          baseLayer._imageryProvider._tilingScheme._rectangleNortheastInMeters.y += oxy[1]
+        }
+        catch (error) {
+          console.log(error)
+        }
       }
     })
   }
@@ -106,7 +129,6 @@ class Controller {
     const baseFragmentShaderSource =
       viewer.scene.globe._surfaceShaderSet.baseFragmentShaderSource.sources
     for (let i = 0; i < baseFragmentShaderSource.length; i++) {
-      debugger
       const oneSource = baseFragmentShaderSource[i]
       // 格式必须一致 不能多有空格 且保持版本一致性
       const strS = 'gl_FragColor = finalColor;\n\

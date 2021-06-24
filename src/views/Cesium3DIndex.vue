@@ -32,7 +32,7 @@ export default defineComponent({
       res = res.data
       res.some((elem:any, index:any) => {
         res[index].classConfig = JSON.parse(elem.classConfig)
-        res[index].interfaceConfig = JSON.parse(elem.interfaceConfig)
+        res[index].interfaceConfig = elem.interfaceConfig === '' ? [] : JSON.parse(elem.interfaceConfig)
         forIn(res[index].interfaceConfig, (v:any, i:any) => {
           if (isNaN(parseFloat(v))) {
             res[index].interfaceConfig[i] = v === 'true'
