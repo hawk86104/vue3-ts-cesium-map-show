@@ -123,7 +123,7 @@ class Controller {
       viewer.resolutionScale = vtxf_dpr
     }
   }
-  // 更改配色
+  // 更改 cesium 着色的方法
   changeImageryProviderColors(viewer: any) {
     // 更改底图的着色器 代码
     const baseFragmentShaderSource =

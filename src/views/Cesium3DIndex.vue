@@ -4,6 +4,7 @@
 <script lang="ts">
 /* eslint-disable no-debugger */
 import { GController } from '@/utils/ctrlCesium/Controller'
+import Titleset from '@/utils/ctrlCesium/Titleset'
 import { defineComponent, onBeforeMount, nextTick } from 'vue'
 import { getMapConfig, getMapImageryList } from '@/api/base'
 import { zipObject, map, forIn} from 'lodash'
@@ -15,6 +16,8 @@ export default defineComponent({
     const initMap = (BaseMapConfig:any, MapImageryList:any) => {
       const viewer:any = GController.init(BaseMapConfig, MapImageryList)
       console.log(viewer)
+      const GTitleset = new Titleset(viewer)
+      GTitleset.addtest()
     }
     const getBaseMapConfig = async () => {
       let res:any = await getMapConfig()
