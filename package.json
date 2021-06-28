@@ -10,6 +10,7 @@
   "dependencies": {
     "@types/cesium": "^1.67.13",
     "axios": "^0.21.1",
+    "cesium-navigation-es6": "^1.1.7",
     "core-js": "^3.6.5",
     "lodash": "^4.17.21",
     "nprogress": "^0.2.0",
