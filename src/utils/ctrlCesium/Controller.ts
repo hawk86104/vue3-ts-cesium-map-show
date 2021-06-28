@@ -17,7 +17,7 @@ class Controller {
   init(BaseMapConfig: any, MapImageryList: any) {
     const mapID = 'cesiumContainer'
     let imageryProviderConfig = new Cesium.SingleTileImageryProvider({
-      url: './Cesium-1.82/background.png',
+      url: './Cesium-1.82-hawk/background.png',
     })
     if (MapImageryList.length !== 0) {
       imageryProviderConfig = this.setOneimageryProvider(MapImageryList[0])

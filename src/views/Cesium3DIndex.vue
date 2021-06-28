@@ -4,6 +4,9 @@
 <script lang="ts">
 /* eslint-disable no-debugger */
 import { GController } from '@/utils/ctrlCesium/Controller'
+declare global {
+    interface Window { GController: any; }
+}
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import { defineComponent, onBeforeMount, nextTick } from 'vue'
 import { getMapConfig, getMapImageryList } from '@/api/base'
@@ -15,7 +18,7 @@ export default defineComponent({
   setup() {
     const initMap = (BaseMapConfig:any, MapImageryList:any) => {
       const viewer:any = GController.init(BaseMapConfig, MapImageryList)
-      console.log(viewer)
+      window.GController = viewer // 全局控制台 调试viewer
       const GTitleset = new Titleset(viewer)
       GTitleset.addtest()
     }
