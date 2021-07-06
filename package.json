@@ -12,6 +12,7 @@
     "axios": "^0.21.1",
     "cesium-navigation-es6": "^1.1.7",
     "core-js": "^3.6.5",
+    "element-plus": "^1.0.2-beta.53",
     "lodash": "^4.17.21",
     "nprogress": "^0.2.0",
     "vue": "^3.0.0",

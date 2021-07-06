@@ -16,6 +16,7 @@ module.exports = {
     ecmaVersion: 2020,
   },
   rules: {
+    "@typescript-eslint/no-this-alias": ["off"],
     "@typescript-eslint/no-explicit-any": ["off"],
     '@typescript-eslint/no-non-null-assertion': 'off',
     'curly': ['error', 'multi-line'],

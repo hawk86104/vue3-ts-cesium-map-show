@@ -7,14 +7,51 @@ class Titleset {
   constructor(viewer: any) {
     this.viewer = viewer
   }
+  update3dtilesMaxtrix(tileset: any) {
+    // 根据tileset的边界球体中心点的笛卡尔坐标得到经纬度坐标
+    const cartographic = Cesium.Cartographic.fromCartesian(
+      tileset.boundingSphere.center
+    )
+    debugger
+    // 根据经纬度和高度0，得到地面笛卡尔坐标
+    const surface = Cesium.Cartesian3.fromRadians(
+      cartographic.longitude,
+      cartographic.latitude,
+      0 // cartographic.height
+    )
+    // 根据经纬度和需要的高度，得到偏移后的笛卡尔坐标
+    const offset = Cesium.Cartesian3.fromRadians(
+      cartographic.longitude,
+      cartographic.latitude,
+      -500 // 程度的高度 需要偏移 下降500米
+    )
+    // const offset = Cesium.Cartesian3.fromRadians(
+    //   cartographic.longitude,
+    //   cartographic.latitude,
+    //   0
+    // )
+    // 计算坐标变换，得到新的笛卡尔坐标
+    const translation = Cesium.Cartesian3.subtract(
+      offset,
+      surface,
+      new Cesium.Cartesian3()
+    )
+    // 调整3dtiles位置
+    tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation)
+  }
   addtest() {
+    const _this = this
     this.viewer.scene.primitives
       .add(
         new Cesium.Cesium3DTileset({
-          url: 'http://myhome.217dan.com:8081/sz_ns2/tileset.json',
+          url: 'http://myhome.217dan.com:8081/shanghai_all/tileset.json',
         })
       )
       .readyPromise.then(function(tileset: any) {
+        // _this.viewer.zoomTo(tileset) // 切到白膜的位置
+
+        // 白膜的 更改3dtiles姿态，包括位置，旋转角度，高度
+        _this.update3dtilesMaxtrix(tileset)
         // 设置白膜的默认透明度
         tileset.style = new Cesium.Cesium3DTileStyle({
           color: {
@@ -54,27 +91,45 @@ class Titleset {
           }
         })
       })
-    this.viewer.scene.camera.flyTo({
-      // setView
-      destination: {
-        x: -2394510.2078150916,
-        y: 5395360.292764892,
-        z: 2420140.372624237,
-      },
-      orientation: {
-        direction: new Cesium.Cartesian3(
-          0.41752728100630826,
-          -0.6312054016802423,
-          0.6536441772900325
-        ),
-        up: new Cesium.Cartesian3(
-          -0.21208294240644568,
-          0.6311630077718327,
-          0.7460925432951585
-        ),
-      },
-      duration: 6, // 延迟秒数
-    })
+
+    // const x = -2394510.2078150916
+    // const y = 5395360.292764892
+    // const z = 2420140.372624237
+
+    // // 这里是世界坐标 xyz 转 经纬度数
+    // const ellipsoid = this.viewer.scene.globe.ellipsoid
+    // const cartesian3 = new Cesium.Cartesian3(x, y, z)
+    // const cartographic = ellipsoid.cartesianToCartographic(cartesian3)
+    // const lat = Cesium.Math.toDegrees(cartographic.latitude)
+    // const lng = Cesium.Math.toDegrees(cartographic.longitude)
+    // const alt = cartographic.height
+
+    // // 这里是 经纬度 转 世界坐标xyz
+    // const ellipsoidz = this.viewer.scene.globe.ellipsoid
+    // const cartographicz = Cesium.Cartographic.fromDegrees(lng, lat, alt)
+    // const cartesianXYZ = ellipsoidz.cartographicToCartesian(cartographicz)
+
+    // this.viewer.scene.camera.flyTo({
+    //   // setView
+    //   destination: {
+    //     x: cartesianXYZ.x,
+    //     y: cartesianXYZ.y,
+    //     z: cartesianXYZ.z,
+    //   },
+    //   orientation: {
+    //     direction: new Cesium.Cartesian3(
+    //       0.41752728100630826,
+    //       -0.6312054016802423,
+    //       0.6536441772900325
+    //     ),
+    //     up: new Cesium.Cartesian3(
+    //       -0.21208294240644568,
+    //       0.6311630077718327,
+    //       0.7460925432951585
+    //     ),
+    //   },
+    //   duration: 1, // 延迟秒数
+    // })
   }
   add(inParam: any) {
     console.log(inParam)
