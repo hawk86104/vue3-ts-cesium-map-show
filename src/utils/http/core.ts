@@ -239,7 +239,7 @@ class EnclosureHttp {
     params?: T,
     config?: EnclosureHttpRequestConfig
   ): Promise<T> {
-    return this.request<T>('post', this.urlPrefix + url, params, config)
+    return this.request<T>('post', url, params, config)
   }
 
   public get<T>(
@@ -247,7 +247,7 @@ class EnclosureHttp {
     params?: T,
     config?: EnclosureHttpRequestConfig
   ): Promise<T> {
-    return this.request<T>('get', this.urlPrefix + url, params, config)
+    return this.request<T>('get', url, params, config)
   }
 }
 

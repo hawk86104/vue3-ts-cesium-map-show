@@ -11,8 +11,8 @@ declare global {
   interface Window { GController: any; }
 }
 declare const Cesium: any
-import { defineComponent, onBeforeMount, nextTick, ref } from 'vue'
-import { getMapView } from '@/api/base'
+import { defineComponent, onBeforeMount, ref } from 'vue'
+import { getMapView, setMapView } from '@/api/base'
 import { zipObject, map} from 'lodash'
 
 export default defineComponent({
@@ -21,7 +21,7 @@ export default defineComponent({
   setup() {
     const IsShow = ref<boolean>(false)
     const FirstMapView = ref<any>()
-    const save = () => {
+    const save = async () => {
       const camera:any = window.GController.scene.camera
       const direction:any = camera.direction
       const up:any = camera.up
@@ -32,11 +32,17 @@ export default defineComponent({
       const cartographic = ellipsoid.cartesianToCartographic(cartesian3)
       const lat = Cesium.Math.toDegrees(cartographic.latitude)
       const lng = Cesium.Math.toDegrees(cartographic.longitude)
-      const alt = cartographic.height
-      console.log(lat, lng, alt)
-      console.log(direction, up)
+      const height = cartographic.height
+      const { reData } = await setMapView({
+        lat: lat,
+        lng: lng,
+        height: height,
+        direction: direction,
+        up: up
+      })
+      console.log(reData)
     }
-    const flyTo = () => {
+    const flyTo = async () => {
       // const x = -2394510.2078150916
       // const y = 5395360.292764892
       // const z = 2420140.372624237
@@ -48,6 +54,11 @@ export default defineComponent({
       // const lat = Cesium.Math.toDegrees(cartographic.latitude)
       // const lng = Cesium.Math.toDegrees(cartographic.longitude)
       // const alt = cartographic.height
+      FirstMapView.value = (await getMapView()).data
+      FirstMapView.value = zipObject(
+        map(FirstMapView.value, 'name'), map(FirstMapView.value, 'value')
+      )
+      IsShow.value = FirstMapView.value.showSaveButton === '1'
 
       // 这里是 经纬度 转 世界坐标xyz
       const ellipsoidz = window.GController.scene.globe.ellipsoid
@@ -74,18 +85,12 @@ export default defineComponent({
             parseFloat(FirstMapView.value.up_z)
           ),
         },
-        duration: 2, // 延迟秒数
+        duration: FirstMapView.value.duration, // 延迟秒数
       })
     }
     onBeforeMount(() => {
-      nextTick(async () => {
-        FirstMapView.value = (await getMapView()).data
-        FirstMapView.value = zipObject(
-          map(FirstMapView.value, 'name'), map(FirstMapView.value, 'value')
-        )
-        debugger
-        IsShow.value = FirstMapView.value.showSaveButton === '1'
-      })
+      // nextTick(async () => {
+      // })
     })
     return {
       IsShow, FirstMapView, save, flyTo

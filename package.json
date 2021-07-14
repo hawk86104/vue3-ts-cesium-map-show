@@ -15,6 +15,7 @@
     "element-plus": "^1.0.2-beta.53",
     "lodash": "^4.17.21",
     "nprogress": "^0.2.0",
+    "qs": "^6.10.1",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",
