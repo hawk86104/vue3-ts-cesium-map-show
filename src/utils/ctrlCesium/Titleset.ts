@@ -8,11 +8,12 @@ class Titleset {
     this.viewer = viewer
   }
   update3dtilesMaxtrix(tileset: any) {
+    // xyz 笛卡尔  lat lon 弧度   【 lat lon 经纬度 】
+    debugger
     // 根据tileset的边界球体中心点的笛卡尔坐标得到经纬度坐标
     const cartographic = Cesium.Cartographic.fromCartesian(
       tileset.boundingSphere.center
     )
-    debugger
     // 根据经纬度和高度0，得到地面笛卡尔坐标
     const surface = Cesium.Cartesian3.fromRadians(
       cartographic.longitude,
@@ -21,14 +22,15 @@ class Titleset {
     )
     // 根据经纬度和需要的高度，得到偏移后的笛卡尔坐标
     const offset = Cesium.Cartesian3.fromRadians(
-      cartographic.longitude,
+      cartographic.longitude, // + Cesium.Math.toRadians(0.0001), 这里更改的是经纬度偏移
       cartographic.latitude,
       -500 // 程度的高度 需要偏移 下降500米
     )
-    // const offset = Cesium.Cartesian3.fromRadians(
-    //   cartographic.longitude,
-    //   cartographic.latitude,
-    //   0
+    offset.x += 100 // 这里可以更改 真实 米的偏移
+    // const offset = Cesium.Cartesian3.fromDegrees(
+    //   tileset.boundingSphere.center.x + 10,
+    //   tileset.boundingSphere.center.y,
+    //   0.0
     // )
     // 计算坐标变换，得到新的笛卡尔坐标
     const translation = Cesium.Cartesian3.subtract(
@@ -44,18 +46,20 @@ class Titleset {
     this.viewer.scene.primitives
       .add(
         new Cesium.Cesium3DTileset({
-          url: 'http://myhome.217dan.com:8081/shanghai_all/tileset.json',
+          url: 'http://myhome.217dan.com:8081/chengdu_all/tileset.json',
         })
       )
       .readyPromise.then(function(tileset: any) {
-        // _this.viewer.zoomTo(tileset) // 切到白膜的位置
+        setTimeout(() => {
+          _this.viewer.zoomTo(tileset) // 切到白膜的位置
+        }, 2000)
 
         // 白膜的 更改3dtiles姿态，包括位置，旋转角度，高度
         _this.update3dtilesMaxtrix(tileset)
         // 设置白膜的默认透明度
         tileset.style = new Cesium.Cesium3DTileStyle({
           color: {
-            conditions: [['true', "color('rgba(255,255,255,0.5)')"]],
+            conditions: [['true', "color('rgba(255,255,255,0.9)')"]],
           },
         })
         tileset.tileVisible.addEventListener(function(cesium3DTile: any) {
@@ -133,7 +137,7 @@ class Titleset {
   }
   add(inParam: any) {
     console.log(inParam)
-    // const url = 'http://data.marsgis.cn/3dtiles/jzw-chengdu-gcj/tileset.json' // 程度
+    // const url = 'http://data.marsgis.cn/3dtiles/jzw-chengdu-gcj/tileset.json' // 成都
     // const url = 'http://211.149.185.229:8081/data/buildmapping/tileset.json' // 深圳
     const url =
       'https://lab.earthsdk.com/model/702aa950d03c11e99f7ddd77cbe22fea/tileset.json' // 上海
