@@ -1,7 +1,8 @@
-
 <template>
   <div class="ButtonToolsContainer">
-    <el-button v-if="IsShow" type="info" plain @click="save()">记录视角位置</el-button>
+    <el-button v-if="IsShow" type="info" plain @click="save()"
+      >记录视角位置</el-button
+    >
   </div>
 </template>
 
@@ -14,6 +15,7 @@ declare const Cesium: any
 import { defineComponent, onBeforeMount, ref } from 'vue'
 import { getMapView, setMapView } from '@/api/base'
 import { zipObject, map} from 'lodash'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
 export default defineComponent({
   name: 'ButtonTools',
@@ -21,7 +23,7 @@ export default defineComponent({
   setup() {
     const IsShow = ref<boolean>(false)
     const FirstMapView = ref<any>()
-    const save = async () => {
+    const save = () => {
       const camera:any = window.GController.scene.camera
       const direction:any = camera.direction
       const up:any = camera.up
@@ -33,14 +35,29 @@ export default defineComponent({
       const lat = Cesium.Math.toDegrees(cartographic.latitude)
       const lng = Cesium.Math.toDegrees(cartographic.longitude)
       const height = cartographic.height
-      const { reData } = await setMapView({
-        lat: lat,
-        lng: lng,
-        height: height,
-        direction: direction,
-        up: up
+
+      ElMessageBox.confirm('提交保存此摄像头视图, 是否继续?', '提示', {
+        confirmButtonText: '保存',
+        cancelButtonText: '取消',
+        type: 'warning',
       })
-      console.log(reData)
+        .then(async () => {
+          const { reData } = await setMapView({
+            lat: lat,
+            lng: lng,
+            height: height,
+            direction: direction,
+            up: up
+          })
+          console.log(reData)
+          ElMessage({
+            type: 'success',
+            message: '保存成功!',
+          })
+        })
+        .catch((e:any ) => {
+          console.log(e)
+        })
     }
     const flyTo = async () => {
       // const x = -2394510.2078150916
@@ -59,6 +76,11 @@ export default defineComponent({
         map(FirstMapView.value, 'name'), map(FirstMapView.value, 'value')
       )
       IsShow.value = FirstMapView.value.showSaveButton === '1'
+
+      // 如果不飞到视图 直接跳过
+      if (FirstMapView.value.flytoView === '0') {
+        return
+      }
 
       // 这里是 经纬度 转 世界坐标xyz
       const ellipsoidz = window.GController.scene.globe.ellipsoid
@@ -104,10 +126,6 @@ export default defineComponent({
   position: absolute;
   bottom: 80px;
   padding: 4px 6px 4px 6px;
-  // color: white;
-  // font-size: 14px;
   right: 0px;
-  // background-color: #00000055;
-  // width: 175px;
 }
 </style>

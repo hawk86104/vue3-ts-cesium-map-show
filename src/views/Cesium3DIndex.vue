@@ -33,7 +33,7 @@ export default defineComponent({
       ButtonToolsRef.value.flyTo()
 
       const GTitleset = new Titleset(viewer)
-      GTitleset.addtest()
+      GTitleset.init()
     }
     const getBaseMapConfig = async () => {
       let res:any = await getMapConfig()
