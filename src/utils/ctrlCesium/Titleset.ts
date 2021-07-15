@@ -1,15 +1,118 @@
 /* eslint-disable no-debugger */
 declare const Cesium: any
-
+import { getTitlesetList } from '@/api/titleset'
+import { colorRgb1 } from '@/utils/color'
 class Titleset {
   viewer: any
   modalEntities: any
   constructor(viewer: any) {
     this.viewer = viewer
   }
-  update3dtilesMaxtrix(tileset: any) {
-    // xyz 笛卡尔  lat lon 弧度   【 lat lon 经纬度 】
+  async init() {
+    const res: any = await getTitlesetList()
+    const _this = this
+    if (res.data) {
+      res.data.forEach((element) => {
+        if (element.url) {
+          _this.addOne3dTitleset(element)
+        }
+      })
+    }
+  }
+  addOne3dTitleset(ele: any) {
+    const _this = this
+    this.viewer.scene.primitives
+      .add(
+        new Cesium.Cesium3DTileset({
+          url: ele.url,
+        })
+      )
+      .readyPromise.then(function(tileset: any) {
+        if (ele.flytoswitch === 1) {
+          _this.viewer.zoomTo(tileset) // 摄像头切到到白膜的位置
+        }
+        // 白膜的 更改3dtiles姿态，包括位置，旋转角度，高度
+        _this.update3dtilesMaxtrix(tileset, ele)
+
+        // 设置白膜的颜色
+        tileset.style = new Cesium.Cesium3DTileStyle({
+          color: {
+            conditions: [['true', `color('${ele.color}')`]],
+          },
+        })
+
+        // 设置白膜的打光效果
+        if (ele.effectswitch === 1) {
+          _this.makeEffect(tileset, ele)
+        }
+      })
+  }
+  makeEffect(tileset: any, ele: any) {
+    tileset.tileVisible.addEventListener(function(cesium3DTile: any) {
+      // 以下设置白膜的打光效果
+      const cesium3DTileCon: any = cesium3DTile.content
+      const featuresLength: number = cesium3DTileCon.featuresLength
+      const effect_color: any = colorRgb1(ele.effect_color)
+      for (let i = 0; i < featuresLength; i += 2) {
+        const _model = cesium3DTileCon.getFeature(i).content._model
+        if (_model && _model._sourcePrograms && _model._rendererResources) {
+          Object.getOwnPropertyNames(_model._sourcePrograms).forEach(function(
+            i: any
+          ) {
+            const msp = _model._sourcePrograms[i]
+            _model._rendererResources.sourceShaders[msp.fragmentShader] = `
+            varying vec3 v_positionEC;
+            void main(void){
+              vec4 position = czm_inverseModelView * vec4(v_positionEC,1); // 位置
+              float glowRange = ${ele.height.toFixed(
+    2
+  )}; // 光环的移动范围(高度)
+              gl_FragColor = vec4(${effect_color[0]}, ${effect_color[1]}, ${
+  effect_color[2]
+}, 1.0); // 颜色
+              gl_FragColor *= vec4(vec3(position.z / 100.0), 1.0); // 渐变
+              // 动态光环
+              float time = fract(czm_frameNumber / 360.0);
+              time = abs(time - 0.5) * 2.0;
+              float diff = step(0.005, abs( clamp(position.z / glowRange, 0.0, 1.0) - time));
+              gl_FragColor.rgb += gl_FragColor.rgb * (1.0 - diff);
+            }
+            `
+          })
+          _model._shouldRegenerateShaders = true // 控制
+        }
+      }
+    })
+  }
+  update3dtilesMaxtrix(tileset: any, ele: any) {
     debugger
+    // 根据tileset的边界球体中心点的笛卡尔坐标得到经纬度坐标
+    const cartographic = Cesium.Cartographic.fromCartesian(
+      tileset.boundingSphere.center
+    )
+    // 根据经纬度和高度0，得到地面笛卡尔坐标
+    const surface = Cesium.Cartesian3.fromRadians(
+      cartographic.longitude,
+      cartographic.latitude,
+      cartographic.height
+    )
+    // 根据经纬度和需要的高度，得到偏移后的笛卡尔坐标
+    const offset = Cesium.Cartesian3.fromRadians(
+      cartographic.longitude + Cesium.Math.toRadians(ele.offset_x), // 这里更改的是经纬度偏移
+      cartographic.latitude + Cesium.Math.toRadians(ele.offset_y),
+      cartographic.height + ele.offset_z // 程度的高度 需要偏移
+    )
+    // 计算坐标变换，得到新的笛卡尔坐标
+    const translation = Cesium.Cartesian3.subtract(
+      offset,
+      surface,
+      new Cesium.Cartesian3()
+    )
+    // 调整3dtiles位置
+    tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation)
+  }
+  move3dtilesMaxtrix(tileset: any) {
+    // xyz 笛卡尔  lat lon 弧度   【 lat lon 经纬度 】
     // 根据tileset的边界球体中心点的笛卡尔坐标得到经纬度坐标
     const cartographic = Cesium.Cartographic.fromCartesian(
       tileset.boundingSphere.center
@@ -55,7 +158,7 @@ class Titleset {
         }, 2000)
 
         // 白膜的 更改3dtiles姿态，包括位置，旋转角度，高度
-        _this.update3dtilesMaxtrix(tileset)
+        _this.move3dtilesMaxtrix(tileset)
         // 设置白膜的默认透明度
         tileset.style = new Cesium.Cesium3DTileStyle({
           color: {
