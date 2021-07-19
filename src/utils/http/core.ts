@@ -42,7 +42,7 @@ class EnclosureHttp {
   private currentCancelTokenKey = ''
 
   // 当前调用目录前缀
-  private urlPrefix = '/api'
+  private urlPrefix = process.env.VUE_APP_API_URL
 
   private beforeRequestCallback: EnclosureHttpRequestConfig['beforeRequestCallback'] =
     undefined

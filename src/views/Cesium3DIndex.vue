@@ -8,6 +8,7 @@
 import { GController } from '@/utils/ctrlCesium/Controller'
 import ShowLngLat from '@/components/ShowLngLat.vue' // @ is an alias to /src
 import ButtonTools from '@/components/ButtonTools.vue'
+
 declare global {
     interface Window { GController: any; }
 }
