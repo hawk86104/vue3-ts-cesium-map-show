@@ -4,13 +4,14 @@ import { getTitlesetList } from '@/api/titleset'
 import { colorRgb1 } from '@/utils/color'
 class Titleset {
   viewer: any
-  modalEntities: any
+  modalPrimitives: any
   constructor(viewer: any) {
     this.viewer = viewer
   }
   async init() {
     const res: any = await getTitlesetList()
     const _this = this
+    _this.modalPrimitives = []
     if (res.data) {
       res.data.forEach((element) => {
         if (element.url) {
@@ -21,7 +22,7 @@ class Titleset {
   }
   addOne3dTitleset(ele: any) {
     const _this = this
-    this.viewer.scene.primitives
+    const modalOne = this.viewer.scene.primitives
       .add(
         new Cesium.Cesium3DTileset({
           url: ele.url,
@@ -46,6 +47,7 @@ class Titleset {
           _this.makeEffect(tileset, ele)
         }
       })
+    _this.modalPrimitives.push(modalOne)
   }
   makeEffect(tileset: any, ele: any) {
     tileset.tileVisible.addEventListener(function(cesium3DTile: any) {
@@ -247,7 +249,7 @@ class Titleset {
     const tiles = new Cesium.Cesium3DTileset({
       url: url, // 带网络属性模板
     })
-    this.modalEntities = this.viewer.scene.primitives.add(tiles)
+    this.modalPrimitives = this.viewer.scene.primitives.add(tiles)
     this.viewer.scene.camera.setView({
       destination: {
         // x: -2393550.3357974524,

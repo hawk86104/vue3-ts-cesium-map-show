@@ -6,6 +6,7 @@
 <script lang="ts">
 /* eslint-disable no-debugger */
 import { GController } from '@/utils/ctrlCesium/Controller'
+import { getBaseMapConfig, getBaseMapImageryList } from '@/utils/getFormatData/BaseMap'
 import ShowLngLat from '@/components/ShowLngLat.vue' // @ is an alias to /src
 import ButtonTools from '@/components/ButtonTools.vue'
 
@@ -14,8 +15,6 @@ declare global {
 }
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import { defineComponent, onBeforeMount, nextTick, ref } from 'vue'
-import { getMapConfig, getMapImageryList } from '@/api/base'
-import { zipObject, map, forIn} from 'lodash'
 
 export default defineComponent({
   name: 'Cesium3DIndex',
@@ -35,34 +34,6 @@ export default defineComponent({
 
       const GTitleset = new Titleset(viewer)
       GTitleset.init()
-    }
-    const getBaseMapConfig = async () => {
-      let res:any = await getMapConfig()
-      res = res.data
-      res = zipObject(
-        map(res, 'name'), map(res, 'value')
-      )
-      forIn(res, (value:any, index:any) => {
-        res[index] = value === '1'
-      })
-      return res
-    }
-    const getBaseMapImageryList = async () => {
-      let res:any = await getMapImageryList()
-      res = res.data
-      res.some((elem:any, index:any) => {
-        res[index].classConfig = JSON.parse(elem.classConfig)
-        res[index].interfaceConfig = elem.interfaceConfig === '' ? [] : JSON.parse(elem.interfaceConfig)
-        forIn(res[index].interfaceConfig, (v:any, i:any) => {
-          if (isNaN(parseFloat(v))) {
-            res[index].interfaceConfig[i] = v === 'true'
-          }
-          else {
-            res[index].interfaceConfig[i] = parseFloat(v)
-          }
-        })
-      })
-      return res
     }
     onBeforeMount(() => {
       nextTick(async () => {
