@@ -1,17 +1,32 @@
 /* eslint-disable no-debugger */
 declare const Cesium: any
-import { getTitlesetList } from '@/api/titleset'
+import { getTitlesetList, getOneTitleset } from '@/api/titleset'
 import { colorRgb1 } from '@/utils/color'
 class Titleset {
   viewer: any
   modalPrimitives: any
   constructor(viewer: any) {
     this.viewer = viewer
+    this.modalPrimitives = []
+  }
+  setOneModalOff(ele: any) {
+    const OneModal = this.modalPrimitives[0]
+    if (OneModal) {
+      debugger
+      this.update3dtilesMaxtrix(OneModal, ele)
+    }
+  }
+  async showOne(id: string): Promise<any> {
+    const res: any = await getOneTitleset(id)
+    if (res.data.length === 0 || !res.data[0].url) {
+      return false
+    }
+    this.addOne3dTitleset(res.data[0])
+    return true
   }
   async init() {
     const res: any = await getTitlesetList()
     const _this = this
-    _this.modalPrimitives = []
     if (res.data) {
       res.data.forEach((element) => {
         if (element.url) {
@@ -28,25 +43,25 @@ class Titleset {
           url: ele.url,
         })
       )
-      .readyPromise.then(function(tileset: any) {
-        if (ele.flytoswitch === 1) {
-          _this.viewer.zoomTo(tileset) // 摄像头切到到白膜的位置
-        }
-        // 白膜的 更改3dtiles姿态，包括位置，旋转角度，高度
-        _this.update3dtilesMaxtrix(tileset, ele)
+    modalOne.readyPromise.then(function(tileset: any) {
+      if (ele.flytoswitch === 1) {
+        _this.viewer.zoomTo(tileset) // 摄像头切到到白膜的位置
+      }
+      // 白膜的 更改3dtiles姿态，包括位置，旋转角度，高度
+      _this.update3dtilesMaxtrix(tileset, ele)
 
-        // 设置白膜的颜色
-        tileset.style = new Cesium.Cesium3DTileStyle({
-          color: {
-            conditions: [['true', `color('${ele.color}')`]],
-          },
-        })
-
-        // 设置白膜的打光效果
-        if (ele.effectswitch === 1) {
-          _this.makeEffect(tileset, ele)
-        }
+      // 设置白膜的颜色
+      tileset.style = new Cesium.Cesium3DTileStyle({
+        color: {
+          conditions: [['true', `color('${ele.color}')`]],
+        },
       })
+
+      // 设置白膜的打光效果
+      if (ele.effectswitch === 1) {
+        _this.makeEffect(tileset, ele)
+      }
+    })
     _this.modalPrimitives.push(modalOne)
   }
   makeEffect(tileset: any, ele: any) {
@@ -87,7 +102,6 @@ class Titleset {
     })
   }
   update3dtilesMaxtrix(tileset: any, ele: any) {
-    debugger
     // 根据tileset的边界球体中心点的笛卡尔坐标得到经纬度坐标
     const cartographic = Cesium.Cartographic.fromCartesian(
       tileset.boundingSphere.center
