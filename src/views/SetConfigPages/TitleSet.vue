@@ -11,6 +11,8 @@
             <el-slider v-model="offSet_lat" :min="-100" :max="100" :step="1" :format-tooltip="formatTooltip" @input="change_offset"></el-slider>
             <span class='c_title'>偏移量height高度(米):</span>
             <el-slider v-model="offSet_height" :min="-2000" :max="2000" :step="10" @input="change_offset"></el-slider>
+            <span class='c_title'>白膜颜色:</span>
+            <el-color-picker v-model="color" show-alpha size="mini" class="color-pick-s" @active-change="change_color"></el-color-picker>
           </div>
         </template>
       </PannelBox>
@@ -34,6 +36,7 @@ export default defineComponent({
     const offSet_lon = ref(0)
     const offSet_lat = ref(0)
     const offSet_height = ref(0)
+    const color = ref('rgba(19, 206, 102, 0.8)')
     let GTitleset = null
     const onReadyMap = () => {
       const titleSetId = getUrlKey('id', window.location.href)
@@ -43,6 +46,11 @@ export default defineComponent({
     const formatTooltip = (val: number) => {
       return val / 10000
     }
+    const change_color = (val: string) => {
+      if (GTitleset) {
+        GTitleset.change_color(val)
+      }
+    }
     const change_offset = () => {
       GTitleset.setOneModalOff({
         offset_x: offSet_lon.value / 10000,
@@ -51,12 +59,22 @@ export default defineComponent({
       })
     }
     return {
-      onReadyMap, offSet_lon, offSet_lat, offSet_height, formatTooltip, change_offset
+      onReadyMap, offSet_lon, offSet_lat, offSet_height, formatTooltip, change_offset, color, change_color
     }
   },
 })
 </script>
-
+<style lang="scss">
+.TitleSetCongfig {
+  .titleset_con{
+    .el-color-picker.el-color-picker--mini.color-pick-s{
+      position: relative;
+      top: 9px;
+      left: 11px;
+    }
+  }
+}
+</style>
 <style lang="scss" scoped>
 .TitleSetCongfig {
   position: absolute;

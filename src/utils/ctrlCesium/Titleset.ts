@@ -9,10 +9,20 @@ class Titleset {
     this.viewer = viewer
     this.modalPrimitives = []
   }
+  change_color(color: string) {
+    const OneModal = this.modalPrimitives[0]
+    debugger
+    if (OneModal) {
+      OneModal.style = new Cesium.Cesium3DTileStyle({
+        color: {
+          conditions: [['true', `color('${color}')`]],
+        },
+      })
+    }
+  }
   setOneModalOff(ele: any) {
     const OneModal = this.modalPrimitives[0]
     if (OneModal) {
-      debugger
       this.update3dtilesMaxtrix(OneModal, ele)
     }
   }
