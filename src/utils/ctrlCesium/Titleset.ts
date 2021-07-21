@@ -5,13 +5,46 @@ import { colorRgb1 } from '@/utils/color'
 class Titleset {
   viewer: any
   modalPrimitives: any
+  curEleDatas: any
   constructor(viewer: any) {
     this.viewer = viewer
     this.modalPrimitives = []
+    this.curEleDatas = []
+  }
+  effect_height_change(val: number) {
+    const OneModal = this.modalPrimitives[0]
+    if (!OneModal) {
+      return null
+    }
+    this.curEleDatas[0].height = val
+  }
+  effect_color_change(color: string) {
+    const OneModal = this.modalPrimitives[0]
+    if (!OneModal) {
+      return null
+    }
+    this.curEleDatas[0].effect_color = color
+  }
+  effectswitch_change(val: boolean) {
+    debugger
+    const OneModal = this.modalPrimitives[0]
+    if (!OneModal) {
+      return null
+    }
+    this.curEleDatas[0].effectswitch = val ? 1 : 0
+    console.log(OneModal)
+    // if (val) {
+    //   this.makeEffect(OneModal, this.curEle)
+    // }
+    // else {
+    //   OneModal.tileVisible.removeEventListener(
+    //     this.tileVisible_addEventListener_fun,
+    //     this.curEle
+    //   )
+    // }
   }
   change_color(color: string) {
     const OneModal = this.modalPrimitives[0]
-    debugger
     if (OneModal) {
       OneModal.style = new Cesium.Cesium3DTileStyle({
         color: {
@@ -28,31 +61,32 @@ class Titleset {
   }
   async showOne(id: string): Promise<any> {
     const res: any = await getOneTitleset(id)
+    this.curEleDatas = res.data
     if (res.data.length === 0 || !res.data[0].url) {
       return false
     }
-    this.addOne3dTitleset(res.data[0])
+    this.addOne3dTitleset(res.data[0], 0)
     return true
   }
   async init() {
     const res: any = await getTitlesetList()
     const _this = this
     if (res.data) {
-      res.data.forEach((element) => {
+      _this.curEleDatas = res.data
+      res.data.forEach((element, index: number) => {
         if (element.url) {
-          _this.addOne3dTitleset(element)
+          _this.addOne3dTitleset(element, index)
         }
       })
     }
   }
-  addOne3dTitleset(ele: any) {
+  addOne3dTitleset(ele: any, index: number) {
     const _this = this
-    const modalOne = this.viewer.scene.primitives
-      .add(
-        new Cesium.Cesium3DTileset({
-          url: ele.url,
-        })
-      )
+    const modalOne = this.viewer.scene.primitives.add(
+      new Cesium.Cesium3DTileset({
+        url: ele.url,
+      })
+    )
     modalOne.readyPromise.then(function(tileset: any) {
       if (ele.flytoswitch === 1) {
         _this.viewer.zoomTo(tileset) // 摄像头切到到白膜的位置
@@ -69,47 +103,55 @@ class Titleset {
 
       // 设置白膜的打光效果
       if (ele.effectswitch === 1) {
-        _this.makeEffect(tileset, ele)
+        _this.makeEffect(tileset, ele, index)
       }
     })
     _this.modalPrimitives.push(modalOne)
   }
-  makeEffect(tileset: any, ele: any) {
-    tileset.tileVisible.addEventListener(function(cesium3DTile: any) {
-      // 以下设置白膜的打光效果
-      const cesium3DTileCon: any = cesium3DTile.content
-      const featuresLength: number = cesium3DTileCon.featuresLength
-      const effect_color: any = colorRgb1(ele.effect_color)
-      for (let i = 0; i < featuresLength; i += 2) {
-        const _model = cesium3DTileCon.getFeature(i).content._model
-        if (_model && _model._sourcePrograms && _model._rendererResources) {
-          Object.getOwnPropertyNames(_model._sourcePrograms).forEach(function(
-            i: any
-          ) {
-            const msp = _model._sourcePrograms[i]
-            _model._rendererResources.sourceShaders[msp.fragmentShader] = `
-            varying vec3 v_positionEC;
-            void main(void){
-              vec4 position = czm_inverseModelView * vec4(v_positionEC,1); // 位置
-              float glowRange = ${ele.height.toFixed(
-    2
-  )}; // 光环的移动范围(高度)
-              gl_FragColor = vec4(${effect_color[0]}, ${effect_color[1]}, ${
+  tileVisible_addEventListener_fun(cesium3DTile: any) {
+    const v_this: any = this as any
+    const ele: any = v_this.curEleDatas[v_this.index]
+    // 以下设置白膜的打光效果
+    const cesium3DTileCon: any = cesium3DTile.content
+    const featuresLength: number = cesium3DTileCon.featuresLength
+    const effect_color: any = colorRgb1(ele.effect_color)
+    // if (ele.effectswitch !== 1) {
+    //   return
+    // }
+    for (let i = 0; i < featuresLength; i += 2) {
+      const _model = cesium3DTileCon.getFeature(i).content._model
+      if (_model && _model._sourcePrograms && _model._rendererResources) {
+        Object.getOwnPropertyNames(_model._sourcePrograms).forEach(function(
+          i: any
+        ) {
+          const msp = _model._sourcePrograms[i]
+          _model._rendererResources.sourceShaders[msp.fragmentShader] = `
+      varying vec3 v_positionEC;
+      void main(void){
+        vec4 position = czm_inverseModelView * vec4(v_positionEC,1); // 位置
+        float glowRange = ${ele.height.toFixed(2)}; // 光环的移动范围(高度)
+        gl_FragColor = vec4(${effect_color[0]}, ${effect_color[1]}, ${
   effect_color[2]
 }, 1.0); // 颜色
-              gl_FragColor *= vec4(vec3(position.z / 100.0), 1.0); // 渐变
-              // 动态光环
-              float time = fract(czm_frameNumber / 360.0);
-              time = abs(time - 0.5) * 2.0;
-              float diff = step(0.005, abs( clamp(position.z / glowRange, 0.0, 1.0) - time));
-              gl_FragColor.rgb += gl_FragColor.rgb * (1.0 - diff);
-            }
-            `
-          })
-          _model._shouldRegenerateShaders = true // 控制
-        }
+        gl_FragColor *= vec4(vec3(position.z / 100.0), 1.0); // 渐变
+        // 动态光环
+        float time = fract(czm_frameNumber / 360.0);
+        time = abs(time - 0.5) * 2.0;
+        float diff = step(0.005, abs( clamp(position.z / glowRange, 0.0, 1.0) - time));
+        gl_FragColor.rgb += gl_FragColor.rgb * (1.0 - diff);
       }
-    })
+      `
+        })
+        _model._shouldRegenerateShaders = ele.effectswitch === 1 // 控制 true
+      }
+    }
+  }
+  makeEffect(tileset: any, ele: any, index: number) {
+    const _this = this
+    tileset.tileVisible.addEventListener(
+      _this.tileVisible_addEventListener_fun,
+      {curEleDatas: _this.curEleDatas, ele: ele, index: index}
+    )
   }
   update3dtilesMaxtrix(tileset: any, ele: any) {
     // 根据tileset的边界球体中心点的笛卡尔坐标得到经纬度坐标
