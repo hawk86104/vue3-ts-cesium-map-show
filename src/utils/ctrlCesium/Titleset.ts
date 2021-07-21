@@ -6,10 +6,12 @@ class Titleset {
   viewer: any
   modalPrimitives: any
   curEleDatas: any
+  curSourceShaders: any
   constructor(viewer: any) {
     this.viewer = viewer
     this.modalPrimitives = []
     this.curEleDatas = []
+    this.curSourceShaders = []
   }
   effect_height_change(val: number) {
     const OneModal = this.modalPrimitives[0]
@@ -66,7 +68,7 @@ class Titleset {
       return false
     }
     this.addOne3dTitleset(res.data[0], 0)
-    return true
+    return res.data[0]
   }
   async init() {
     const res: any = await getTitlesetList()
@@ -115,9 +117,6 @@ class Titleset {
     const cesium3DTileCon: any = cesium3DTile.content
     const featuresLength: number = cesium3DTileCon.featuresLength
     const effect_color: any = colorRgb1(ele.effect_color)
-    // if (ele.effectswitch !== 1) {
-    //   return
-    // }
     for (let i = 0; i < featuresLength; i += 2) {
       const _model = cesium3DTileCon.getFeature(i).content._model
       if (_model && _model._sourcePrograms && _model._rendererResources) {
@@ -125,24 +124,31 @@ class Titleset {
           i: any
         ) {
           const msp = _model._sourcePrograms[i]
-          _model._rendererResources.sourceShaders[msp.fragmentShader] = `
-      varying vec3 v_positionEC;
-      void main(void){
-        vec4 position = czm_inverseModelView * vec4(v_positionEC,1); // 位置
-        float glowRange = ${ele.height.toFixed(2)}; // 光环的移动范围(高度)
-        gl_FragColor = vec4(${effect_color[0]}, ${effect_color[1]}, ${
-  effect_color[2]
-}, 1.0); // 颜色
-        gl_FragColor *= vec4(vec3(position.z / 100.0), 1.0); // 渐变
-        // 动态光环
-        float time = fract(czm_frameNumber / 360.0);
-        time = abs(time - 0.5) * 2.0;
-        float diff = step(0.005, abs( clamp(position.z / glowRange, 0.0, 1.0) - time));
-        gl_FragColor.rgb += gl_FragColor.rgb * (1.0 - diff);
-      }
-      `
+          // 备份着色器 代码
+          if (!v_this.curSourceShaders[v_this.index]) {
+            v_this.curSourceShaders[v_this.index] = _model._rendererResources.sourceShaders[msp.fragmentShader]
+          }
+          if (ele.effectswitch !== 1) {
+            _model._rendererResources.sourceShaders[msp.fragmentShader] = v_this.curSourceShaders[v_this.index]
+          }
+          else {
+            _model._rendererResources.sourceShaders[msp.fragmentShader] = `
+            varying vec3 v_positionEC;
+            void main(void){
+              vec4 position = czm_inverseModelView * vec4(v_positionEC,1); // 位置
+              float glowRange = ${ele.height.toFixed(2)}; // 光环的移动范围(高度)
+              gl_FragColor = vec4(${effect_color[0]}, ${effect_color[1]}, ${effect_color[2]}, 1.0); // 颜色
+              gl_FragColor *= vec4(vec3(position.z / 100.0), 1.0); // 渐变
+              // 动态光环
+              float time = fract(czm_frameNumber / 360.0);
+              time = abs(time - 0.5) * 2.0;
+              float diff = step(0.005, abs( clamp(position.z / glowRange, 0.0, 1.0) - time));
+              gl_FragColor.rgb += gl_FragColor.rgb * (1.0 - diff);
+            }
+            `
+          }
         })
-        _model._shouldRegenerateShaders = ele.effectswitch === 1 // 控制 true
+        _model._shouldRegenerateShaders = true // 控制 true
       }
     }
   }
@@ -150,10 +156,13 @@ class Titleset {
     const _this = this
     tileset.tileVisible.addEventListener(
       _this.tileVisible_addEventListener_fun,
-      {curEleDatas: _this.curEleDatas, ele: ele, index: index}
+      { curEleDatas: _this.curEleDatas, ele: ele, index: index, curSourceShaders: _this.curSourceShaders }
     )
   }
   update3dtilesMaxtrix(tileset: any, ele: any) {
+    if (!tileset.ready) {
+      return
+    }
     // 根据tileset的边界球体中心点的笛卡尔坐标得到经纬度坐标
     const cartographic = Cesium.Cartographic.fromCartesian(
       tileset.boundingSphere.center

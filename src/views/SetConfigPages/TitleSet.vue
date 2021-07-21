@@ -16,7 +16,7 @@
             <span class='c_title'>启用打光效果： </span>
             <el-switch v-model="effectswitch" @change="effectswitch_change"></el-switch><br>
             <span class='c_title'>打光效果颜色：{{effect_color}}</span>
-            <el-color-picker v-model="effect_color" size="mini" color-format="rgb" class="color-pick-s" @active-change="effect_color_change"></el-color-picker><br><br>
+            <el-color-picker v-model="effect_color" size="mini" class="color-pick-s" @active-change="effect_color_change"></el-color-picker><br><br>
             <span class='c_title'>光环的移动范围(高度)单位米：{{effect_height}}</span>
             <el-slider v-model="effect_height" :min="0" :max="1000" :step="10" @input="effect_height_change"></el-slider>
           </div>
@@ -27,6 +27,7 @@
   </CesiumContainer>
 </template>
 <script lang="ts">
+/* eslint-disable no-debugger */
 import CesiumContainer from '@/components/CesiumContainer.vue'
 import PannelBox from '@/components/PannelBox.vue'
 import { defineComponent, ref } from 'vue'
@@ -60,10 +61,17 @@ export default defineComponent({
     const effectswitch_change = (val: boolean) => {
       GTitleset.effectswitch_change(val)
     }
-    const onReadyMap = () => {
+    const onReadyMap = async () => {
       const titleSetId = getUrlKey('id', window.location.href)
       GTitleset = new Titleset(window.GController)
-      GTitleset.showOne(titleSetId)
+      const reData = await GTitleset.showOne(titleSetId)
+      offSet_lon.value = reData.offset_x * 10000
+      offSet_lat.value = reData.offset_y * 10000
+      offSet_height.value = reData.offset_z
+      color.value = reData.color
+      effect_color.value = reData.effect_color
+      effectswitch.value = reData.effectswitch === 1
+      effect_height.value = reData.height
     }
     const formatTooltip = (val: number) => {
       return val / 10000
@@ -74,11 +82,13 @@ export default defineComponent({
       }
     }
     const change_offset = () => {
-      GTitleset.setOneModalOff({
-        offset_x: offSet_lon.value / 10000,
-        offset_y: offSet_lat.value / 10000,
-        offset_z: offSet_height.value
-      })
+      if (GTitleset) {
+        GTitleset.setOneModalOff({
+          offset_x: offSet_lon.value / 10000,
+          offset_y: offSet_lat.value / 10000,
+          offset_z: offSet_height.value
+        })
+      }
     }
     return {
       onReadyMap, offSet_lon, offSet_lat, offSet_height, formatTooltip, change_offset, color, change_color, effectswitch,
