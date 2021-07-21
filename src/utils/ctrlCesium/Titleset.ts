@@ -28,22 +28,11 @@ class Titleset {
     this.curEleDatas[0].effect_color = color
   }
   effectswitch_change(val: boolean) {
-    debugger
     const OneModal = this.modalPrimitives[0]
     if (!OneModal) {
       return null
     }
     this.curEleDatas[0].effectswitch = val ? 1 : 0
-    console.log(OneModal)
-    // if (val) {
-    //   this.makeEffect(OneModal, this.curEle)
-    // }
-    // else {
-    //   OneModal.tileVisible.removeEventListener(
-    //     this.tileVisible_addEventListener_fun,
-    //     this.curEle
-    //   )
-    // }
   }
   change_color(color: string) {
     const OneModal = this.modalPrimitives[0]
@@ -67,7 +56,7 @@ class Titleset {
     if (res.data.length === 0 || !res.data[0].url) {
       return false
     }
-    this.addOne3dTitleset(res.data[0], 0)
+    this.addOne3dTitleset(res.data[0], 0, true)
     return res.data[0]
   }
   async init() {
@@ -82,7 +71,7 @@ class Titleset {
       })
     }
   }
-  addOne3dTitleset(ele: any, index: number) {
+  addOne3dTitleset(ele: any, index: number, isConfig = false) {
     const _this = this
     const modalOne = this.viewer.scene.primitives.add(
       new Cesium.Cesium3DTileset({
@@ -104,8 +93,8 @@ class Titleset {
       })
 
       // 设置白膜的打光效果
-      if (ele.effectswitch === 1) {
-        _this.makeEffect(tileset, ele, index)
+      if (ele.effectswitch === 1 || isConfig) {
+        _this.makeEffect(tileset, ele, index, isConfig)
       }
     })
     _this.modalPrimitives.push(modalOne)
@@ -148,15 +137,15 @@ class Titleset {
             `
           }
         })
-        _model._shouldRegenerateShaders = true // 控制 true
+        _model._shouldRegenerateShaders = ele.effectswitch === 1 || v_this.isConfig // 控制 true
       }
     }
   }
-  makeEffect(tileset: any, ele: any, index: number) {
+  makeEffect(tileset: any, ele: any, index: number, isConfig: boolean) {
     const _this = this
     tileset.tileVisible.addEventListener(
       _this.tileVisible_addEventListener_fun,
-      { curEleDatas: _this.curEleDatas, ele: ele, index: index, curSourceShaders: _this.curSourceShaders }
+      { curEleDatas: _this.curEleDatas, ele: ele, index: index, curSourceShaders: _this.curSourceShaders, isConfig: isConfig }
     )
   }
   update3dtilesMaxtrix(tileset: any, ele: any) {
