@@ -18,7 +18,8 @@
             <span class='c_title'>打光效果颜色：{{effect_color}}</span>
             <el-color-picker v-model="effect_color" size="mini" class="color-pick-s" @active-change="effect_color_change"></el-color-picker><br><br>
             <span class='c_title'>光环的移动范围(高度)单位米：{{effect_height}}</span>
-            <el-slider v-model="effect_height" :min="0" :max="1000" :step="10" @input="effect_height_change"></el-slider>
+            <el-slider v-model="effect_height" :min="0" :max="1000" :step="10" @input="effect_height_change"></el-slider><br>
+            <el-button @click="save">保存当前配置</el-button>
           </div>
         </template>
       </PannelBox>
@@ -33,9 +34,11 @@ import PannelBox from '@/components/PannelBox.vue'
 import { defineComponent, ref } from 'vue'
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import { getUrlKey } from '@/utils/common'
+import { ElMessageBox, ElMessage } from 'element-plus'
 declare global {
     interface Window { GController: any; }
 }
+// declare const $: any
 export default defineComponent({
   name: 'TitleSetCongfig',
   components: { CesiumContainer, PannelBox },
@@ -48,6 +51,31 @@ export default defineComponent({
     const effectswitch = ref(true)
     const effect_height = ref(100)
     let GTitleset = null
+    const save = () => {
+      ElMessageBox.confirm('提交保存当前图层的配置信息, 是否继续?', '提示', {
+        confirmButtonText: '保存',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
+          (window.parent as any).postMessage({
+            offSet_lon: offSet_lon.value / 10000,
+            offSet_lat: offSet_lat.value / 10000,
+            offSet_height: offSet_height.value,
+            color: color.value,
+            effect_color: effect_color.value,
+            effectswitch: effectswitch.value,
+            effect_height: effect_height.value
+          }, '*')
+          ElMessage({
+            type: 'success',
+            message: '保存成功!',
+          })
+        })
+        .catch((e:any ) => {
+          console.log(e)
+        })
+    }
     const effect_height_change = (val: number) => {
       if (GTitleset) {
         GTitleset.effect_height_change(val)
@@ -92,7 +120,7 @@ export default defineComponent({
     }
     return {
       onReadyMap, offSet_lon, offSet_lat, offSet_height, formatTooltip, change_offset, color, change_color, effectswitch,
-      effectswitch_change, effect_color_change, effect_color, effect_height_change, effect_height
+      effectswitch_change, effect_color_change, effect_color, effect_height_change, effect_height, save
     }
   },
 })
