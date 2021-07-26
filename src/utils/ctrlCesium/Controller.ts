@@ -52,6 +52,8 @@ class Controller {
       const cC = viewer.cesiumWidget.creditContainer as HTMLElement
       cC.style.display = 'none' // 影藏logo
     }
+    // 设置开启深度检测
+    viewer.scene.globe.depthTestAgainstTerrain = true
     // 初始化 cesium-navigation 控件
     this.initCesiumNavigation(viewer)
 
