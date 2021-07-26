@@ -3,12 +3,11 @@
 // 六边形扩散效果
 declare const Cesium: any
 
-function HexagonSpreadMaterialProperty(ob: any) {
+function HexagonSpreadMaterialProperty(color: any) {
   this._definitionChanged = new Cesium.Event()
   this._color = undefined
   this._colorSubscription = undefined
-  this.color = ob.color
-  this.duration = Cesium.defaultValue(ob.duration, 1000)
+  this.color = color
   this._time = new Date().getTime()
 }
 Object.defineProperties(HexagonSpreadMaterialProperty.prototype, {
@@ -41,8 +40,6 @@ HexagonSpreadMaterialProperty.prototype.getValue = function(
     result.color
   )
   result.image = Cesium.Material.HexagonSpreadMaterialImage
-  result.time =
-  ((new Date().getTime() - this._time) % this.duration) / this.duration
   return result
 }
 interface Other_tmp {
@@ -64,9 +61,9 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 {
      czm_material material = czm_getDefaultMaterial(materialInput);
      vec2 st = materialInput.st;
-     vec4 colorImage = texture2D(image,  vec2(st ));
-     material.alpha = colorImage.a * color.a*0.5;
-     material.diffuse =  1.8* color.rgb  ;
+     vec4 colorImage = texture2D(image,  vec2(st));
+     material.alpha = colorImage.a * color.a * 0.5;
+     material.diffuse =  1.8 * color.rgb  ;
      return material;
  }
  `
@@ -77,7 +74,6 @@ Cesium.Material._materialCache.addMaterial(
       type: Cesium.Material.HexagonSpreadMaterialType,
       uniforms: {
         color: new Cesium.Color(1, 0, 0, 0.5),
-        time: 1,
         image: Cesium.Material.HexagonSpreadMaterialImage,
       },
       source: Cesium.Material.HexagonSpreadSource,
