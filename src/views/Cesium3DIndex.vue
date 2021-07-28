@@ -46,7 +46,7 @@ export default defineComponent({
 
       // 点扩散
       const GCircleDiffusion = new CircleDiffusion(viewer)
-      GCircleDiffusion.add([113.9303, 22.5216, 0], 'rgba(0,255,0,1)', 1000, 3000)
+      GCircleDiffusion.add([113.9303, 22.5216, 0], 'rgba(0,255,0,1)', 100000, 30000)
 
       // 雷达扫描
       const GCircleScan = new CircleScan(viewer)
@@ -62,8 +62,8 @@ export default defineComponent({
 
       // 扩散墙
       const GSpreadWall = new SpreadWall(viewer)
-      GSpreadWall.add([113.9303 + 0.005, 22.5216 - 0.015, 0], 'rgba(255,0,255,0.5)', 500, 1000, 300)
-      GSpreadWall.add([113.9303 - 0.005, 22.5216 - 0.015, 0], 'rgba(18,255,188,0.8)', 600, 2000, 500, 8) // 最后是墙高 和 多边形
+      GSpreadWall.add([113.9303 + 0.005, 22.5216 - 0.015, 0], 'rgba(255,0,255,0.5)', 50000, 100, 300)
+      GSpreadWall.add([113.9303 - 0.005, 22.5216 - 0.015, 0], 'rgba(18,255,188,0.8)', 60000, 200, 500, 8) // 最后是墙高 和 多边形
 
       // 线圈扩散效果
       const GScanline = new Scanline(viewer)
