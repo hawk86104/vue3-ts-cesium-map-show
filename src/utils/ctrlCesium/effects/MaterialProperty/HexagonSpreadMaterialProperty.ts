@@ -55,7 +55,7 @@ HexagonSpreadMaterialProperty.prototype.equals = function(other: Other_tmp) {
 }
 Cesium.HexagonSpreadMaterialProperty = HexagonSpreadMaterialProperty
 Cesium.Material.HexagonSpreadMaterialType = 'HexagonSpreadMaterial'
-Cesium.Material.HexagonSpreadMaterialImage = './hexagon.png'
+Cesium.Material.HexagonSpreadMaterialImage = './effect/hexagon.png'
 Cesium.Material.HexagonSpreadSource = `
 czm_material czm_getMaterial(czm_materialInput materialInput)
 {

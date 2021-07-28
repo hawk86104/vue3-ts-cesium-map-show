@@ -10,17 +10,27 @@ class HexagonSpread {
   }
   add(position: any, color: string, maxRadius: number, duration: number) {
     init()
-    let e = 0.1
+    let start = 0.1
     this.viewer.entities.add({
-      position: Cesium.Cartesian3.fromDegrees(position[0], position[1], position[2]),
+      position: Cesium.Cartesian3.fromDegrees(
+        position[0],
+        position[1],
+        position[2]
+      ),
       ellipse: {
         semiMajorAxis: new Cesium.CallbackProperty(function(n: any) {
-          return (e += duration) > maxRadius && (e = 0.1), e
+          start += maxRadius / (duration / 50)
+          if (start > maxRadius + 0.1) {
+            start = 0.1
+          }
+          return start
         }, false),
         semiMinorAxis: new Cesium.CallbackProperty(function(n: any) {
-          return e
+          return start
         }, false),
-        material: new Cesium.HexagonSpreadMaterialProperty(new Cesium.Color.fromCssColorString(color)),
+        material: new Cesium.HexagonSpreadMaterialProperty(
+          new Cesium.Color.fromCssColorString(color)
+        ),
       },
     })
   }
