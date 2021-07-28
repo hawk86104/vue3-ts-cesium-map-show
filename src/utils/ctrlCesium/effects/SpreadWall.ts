@@ -13,7 +13,8 @@ class SpreadWall {
     color: string,
     maxRadius: number,
     duration: number,
-    wallHeight: number
+    wallHeight: number,
+    edgeCount = 0
   ) {
     init()
     position = Cesium.Cartographic.fromDegrees(
@@ -34,7 +35,8 @@ class SpreadWall {
     let rPositions = {}
     position = this.generateCirclePoints(
       [centerDegrees[0], centerDegrees[1]],
-      currentRadius
+      currentRadius,
+      edgeCount
     )
     position = this.pointsToPositions(position, centerDegrees[2])
     rPositions[maxRadius] = position
@@ -53,7 +55,8 @@ class SpreadWall {
             maxRadius,
             rPositions,
             centerDegrees,
-            duration
+            duration,
+            edgeCount
           )
           currentRadius = reData.currentRadius
           rPositions = reData.rPositions
@@ -61,7 +64,9 @@ class SpreadWall {
         }, false),
         minimumHeights: minimumHeights,
         maximumHeights: maximumHeights,
-        material: new Cesium.WallGradientsMaterialProperty(new Cesium.Color.fromCssColorString(color)),
+        material: new Cesium.WallGradientsMaterialProperty(
+          new Cesium.Color.fromCssColorString(color)
+        ),
       },
     })
   }
@@ -70,10 +75,11 @@ class SpreadWall {
     radius: number,
     rPositions: any,
     centerDegrees: any,
-    duration: number
+    duration: number,
+    edgeCount: number
   ) {
     if (
-      (currentRadius += 1000 / duration * 5,
+      ((currentRadius += (1000 / duration) * 5),
       currentRadius > radius && (currentRadius = 1),
       rPositions[currentRadius])
     ) {
@@ -82,7 +88,8 @@ class SpreadWall {
 
     let t = this.generateCirclePoints(
       [centerDegrees[0], centerDegrees[1]],
-      currentRadius
+      currentRadius,
+      edgeCount
     )
     t = this.pointsToPositions(t, centerDegrees[2])
 
@@ -98,10 +105,17 @@ class SpreadWall {
       n
     )
   }
-  generateCirclePoints(t: any, e: any) {
+  generateCirclePoints(t: any, e: any, edgeCount: number) {
     const n = []
-    for (let i = 0; i <= 360; i += 2) {
-      n.push(this.getCirclePoint(t[0], t[1], i, e))
+    if (edgeCount) {
+      for (let i = 360 / 6, r = 0; r <= 360; r += i) {
+        n.push(this.getCirclePoint(t[0], t[1], r, e))
+      }
+    }
+    else {
+      for (let i = 0; i <= 360; i += 2) {
+        n.push(this.getCirclePoint(t[0], t[1], i, e))
+      }
     }
     return n
   }
