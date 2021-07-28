@@ -61,7 +61,8 @@ export default defineComponent({
 
       // 扩散墙
       const GSpreadWall = new SpreadWall(viewer)
-      GSpreadWall.add([113.9303 + 0.005, 22.5216 - 0.015, 0], 'rgba(255,0,255,0.5)', 500, 1000, 100) // 最后是墙高
+      GSpreadWall.add([113.9303 + 0.005, 22.5216 - 0.015, 0], 'rgba(255,0,255,0.5)', 500, 1000, 300)
+      GSpreadWall.add([113.9303 - 0.005, 22.5216 - 0.015, 0], 'rgba(18,255,188,0.8)', 600, 2000, 500, 8) // 最后是墙高 和 多边形
 
       // 精灵路
       // const GSpriteline = new Spriteline(viewer)
