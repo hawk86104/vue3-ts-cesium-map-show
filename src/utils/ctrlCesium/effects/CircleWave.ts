@@ -18,8 +18,8 @@ class CircleWave {
       ),
       ellipse: {
         height: position[2],
-        semiMinorAxis: 60,
-        semiMajorAxis: 60,
+        semiMinorAxis: 600,
+        semiMajorAxis: 600,
         material: new Cesium.CircleWaveMaterialProperty({
           duration: 2000,
           gradient: 0, // 0
