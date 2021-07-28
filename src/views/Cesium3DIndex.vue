@@ -19,6 +19,7 @@ import CircleDiffusion from '@/utils/ctrlCesium/effects/CircleDiffusion'
 import CircleScan from '@/utils/ctrlCesium/effects/CircleScan'
 import CircleWave from '@/utils/ctrlCesium/effects/CircleWave'
 import HexagonSpread from '@/utils/ctrlCesium/effects/HexagonSpread'
+import SpreadWall from '@/utils/ctrlCesium/effects/SpreadWall'
 // import Spriteline from '@/utils/ctrlCesium/effects/Spriteline'
 import { defineComponent, onBeforeMount, nextTick, ref } from 'vue'
 
@@ -56,7 +57,11 @@ export default defineComponent({
 
       // 六边形
       const GHexagonSpread = new HexagonSpread(viewer)
-      GHexagonSpread.add([113.9303 + 0.015, 22.5216, 58], 'rgba(255,255,0,1)', 500, 1)
+      GHexagonSpread.add([113.9303 + 0.015, 22.5216, 58], 'rgba(255,255,0,1)', 500, 3000)
+
+      // 扩散墙
+      const GSpreadWall = new SpreadWall(viewer)
+      GSpreadWall.add([113.9303 + 0.005, 22.5216 - 0.015, 0], 'rgba(255,0,255,0.5)', 500, 1000, 100) // 最后是墙高
 
       // 精灵路
       // const GSpriteline = new Spriteline(viewer)
