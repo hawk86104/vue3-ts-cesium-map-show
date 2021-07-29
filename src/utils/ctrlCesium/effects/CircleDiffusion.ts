@@ -137,7 +137,7 @@ class CircleDiffusion {
   _getScanSegmentShader() {
     const inpram = 18
     const scanSegmentShader =
-      `uniform sampler2D colorTexture;
+      ` uniform sampler2D colorTexture;
         uniform sampler2D depthTexture;
         varying vec2 v_textureCoordinates;
         uniform vec4 u_scanCenterEC;
@@ -170,13 +170,12 @@ class CircleDiffusion {
             float dis = length(prjOnPlane.xyz - u_scanCenterEC.xyz);
             if(dis < u_radius){
               float f = 1.0 - abs(u_radius - dis) / u_radius;
-              f = pow(f, float(` +
-      inpram +
-      `));
+              f = pow(f, float(` + inpram + `));
               gl_FragColor = mix(gl_FragColor,u_scanColor,f);
             }
             gl_FragColor.a = gl_FragColor.a / 2.0;
-        }`
+        }
+      `
     return scanSegmentShader
   }
   /**

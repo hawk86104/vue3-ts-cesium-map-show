@@ -14,10 +14,10 @@ class CircleWave {
       position: Cesium.Cartesian3.fromDegrees(
         position[0],
         position[1],
-        0
+        position[2]
       ),
       ellipse: {
-        height: position[2],
+        // height: position[2],
         semiMinorAxis: 600,
         semiMajorAxis: 600,
         material: new Cesium.CircleWaveMaterialProperty({
