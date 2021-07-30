@@ -68,13 +68,19 @@ czm_material czm_getMaterial(czm_materialInput materialInput) {
 	material.diffuse = 1.5 * color.rgb;
 	vec2 st = materialInput.st;
 	float dis = distance(st, vec2(0.5, 0.5));
-	float per = fract(time);
-	if(dis > per * 0.5) {
+  float bl = .0;
+  float offset = 0.42;
+  if( dis > 0.5) {
 		material.alpha = 0.0;
 		discard;
-	} else {
-		material.alpha =  color.a  * dis / per / 1.0;
 	}
+  if( dis > offset) {
+    bl = color.a * 1.0 / (0.5 - offset) * (dis - offset);
+    material.alpha =  pow(bl, 3.0);
+	} else {
+    material.alpha = 0.0;
+		discard;
+  }
 	return material;
 }
 `

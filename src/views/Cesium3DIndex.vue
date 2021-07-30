@@ -46,10 +46,10 @@ export default defineComponent({
       GTitleset.init()
 
       // 点扩散
-      // const GCircleDiffusion = new CircleDiffusion(viewer)
-      // GCircleDiffusion.add([113.9303, 22.5216, 0], 'rgba(0,255,0,1)', 10000, 3000)
+      const GCircleDiffusion = new CircleDiffusion(viewer)
+      GCircleDiffusion.add([113.9303, 22.5216, 0], 'rgba(0,255,0,1)', 1000, 3000)
       const GEllipsoidFade = new EllipsoidFade(viewer)
-      GEllipsoidFade.add([113.9303 - 0.02, 22.5216, 8], 'rgba(0,255,0,1)', 1000, 3000)
+      GEllipsoidFade.add([113.9303 - 0.02, 22.5216, 8], 'rgba(0,255,0,0.8)', 1000, 3000)
 
       // 雷达扫描
       // const GCircleScan = new CircleScan(viewer)
