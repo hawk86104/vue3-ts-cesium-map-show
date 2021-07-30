@@ -92,7 +92,7 @@ Cesium.Material.CircleWaveSource = `
                                       float perDis = 0.5 / count;
                                       float disNum;
                                       float bl = .0;
-                                      for (int i = 0; i <= 999; i++) {
+                                      for (int i = 0; i <= 9; i++) {
                                         if (float(i) <= count) {
                                           disNum = perDis *float(i) - dis + per / count;
                                           if (disNum > 0.0) {

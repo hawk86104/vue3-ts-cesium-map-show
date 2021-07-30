@@ -15,9 +15,9 @@ declare global {
 }
 // declare const Cesium: any
 import Titleset from '@/utils/ctrlCesium/Titleset'
-import CircleDiffusion from '@/utils/ctrlCesium/effects/CircleDiffusion'
 import EllipsoidFade from '@/utils/ctrlCesium/effects/EllipsoidFade'
-import CircleScan from '@/utils/ctrlCesium/effects/CircleScan'
+import RaderScan from '@/utils/ctrlCesium/effects/RaderScan'
+// import CircleScan from '@/utils/ctrlCesium/effects/webGL/CircleScan'
 import CircleWave from '@/utils/ctrlCesium/effects/CircleWave'
 import HexagonSpread from '@/utils/ctrlCesium/effects/HexagonSpread'
 import SpreadWall from '@/utils/ctrlCesium/effects/SpreadWall'
@@ -46,14 +46,15 @@ export default defineComponent({
       GTitleset.init()
 
       // 点扩散
-      const GCircleDiffusion = new CircleDiffusion(viewer)
-      GCircleDiffusion.add([113.9303, 22.5216, 0], 'rgba(0,255,0,1)', 1000, 3000)
       const GEllipsoidFade = new EllipsoidFade(viewer)
       GEllipsoidFade.add([113.9303 - 0.02, 22.5216, 8], 'rgba(0,255,0,0.8)', 1000, 3000)
 
       // 雷达扫描
       // const GCircleScan = new CircleScan(viewer)
       // GCircleScan.add([113.9303 - 0.01, 22.5216, 0], 'rgba(0,255,0,1)', 1000, 3000)
+      // RaderScan 雷达扫描
+      const GRaderScan = new RaderScan(viewer)
+      GRaderScan.add([113.9303 - 0.01, 22.5216, 0], 'rgba(0,255,0,1)', 1000, -0.02)
 
       // 圈波纹
       const GCircleWave = new CircleWave(viewer)
@@ -70,7 +71,7 @@ export default defineComponent({
 
       // 线圈扩散效果
       const GScanline = new Scanline(viewer)
-      GScanline.add([113.9303 - 0.01, 22.5216 - 0.020, 0], 'rgba(0,216,255,0.8)', 500, 10)
+      GScanline.add([113.9303 - 0.01, 22.5216 - 0.020, 0], 'rgba(251,16,55,0.8)', 5000, 10)
 
       // 精灵路
       // const GSpriteline = new Spriteline(viewer)
