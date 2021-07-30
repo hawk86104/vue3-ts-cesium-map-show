@@ -10,7 +10,6 @@ class EllipsoidFade {
   }
   add(position: any, color: string, maxRadius: number, duration: number) {
     init()
-    debugger
     let currentRadius = 1
 
     this.viewer.entities.add({
