@@ -12,7 +12,7 @@ class EllipsoidFade {
     init()
     let currentRadius = 1
 
-    this.viewer.entities.add({
+    const entity = this.viewer.entities.add({
       position: Cesium.Cartesian3.fromDegrees(
         position[0],
         position[1],
@@ -39,6 +39,8 @@ class EllipsoidFade {
         ),
       },
     })
+
+    return entity.id
   }
 }
 export default EllipsoidFade
