@@ -1,8 +1,14 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import TitleSet from '../views/SetConfigPages/TitleSet.vue'
+import Effect from '../views/SetConfigPages/Effect.vue'
 import Cesium from '../views/Cesium3DIndex.vue'
 
 const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/effect',
+    name: 'Effect',
+    component: Effect,
+  },
   {
     path: '/titleset',
     name: 'TitleSet',

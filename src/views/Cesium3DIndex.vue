@@ -17,7 +17,6 @@ declare global {
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import EllipsoidFade from '@/utils/ctrlCesium/effects/EllipsoidFade'
 import RaderScan from '@/utils/ctrlCesium/effects/RaderScan'
-// import CircleScan from '@/utils/ctrlCesium/effects/webGL/CircleScan'
 import CircleWave from '@/utils/ctrlCesium/effects/CircleWave'
 import HexagonSpread from '@/utils/ctrlCesium/effects/HexagonSpread'
 import SpreadWall from '@/utils/ctrlCesium/effects/SpreadWall'
@@ -49,9 +48,6 @@ export default defineComponent({
       const GEllipsoidFade = new EllipsoidFade(viewer)
       GEllipsoidFade.add([113.9303 - 0.02, 22.5216, 8], 'rgba(0,255,0,0.8)', 1000, 3000)
 
-      // 雷达扫描
-      // const GCircleScan = new CircleScan(viewer)
-      // GCircleScan.add([113.9303 - 0.01, 22.5216, 0], 'rgba(0,255,0,1)', 1000, 3000)
       // RaderScan 雷达扫描
       const GRaderScan = new RaderScan(viewer)
       GRaderScan.add([113.9303 - 0.01, 22.5216, 0], 'rgba(0,255,0,1)', 1000, -0.02)
