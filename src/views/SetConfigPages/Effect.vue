@@ -14,7 +14,13 @@
                   :value="item.value"
                 >
                 </el-option>
-              </el-select>
+              </el-select><br><br>
+              <span class='c_title'>效果颜色：{{color}}</span>
+              <el-color-picker v-model="color" show-alpha size="mini" class="color-pick-s" @active-change="change_color"></el-color-picker><br><br>
+              <span class='c_title'>效果延迟：{{duration}} 毫秒</span>
+              <el-slider v-model="duration" :min="500" :max="10000" :step="500" @input="effect_duration_change"></el-slider><br><br>
+              <span class='c_title'>最大半径：{{maxRadius}} 米</span>
+              <el-slider v-model="maxRadius" :min="500" :max="10000" :step="500" @input="effect_maxRadius_change"></el-slider><br><br>
             </div>
           </template>
         </PannelBox>
@@ -35,6 +41,7 @@ declare global {
     GController: any
   }
 }
+declare const Cesium: any
 export default defineComponent({
   name: 'EffectCongfig',
   components: { CesiumContainer, PannelBox },
@@ -47,27 +54,58 @@ export default defineComponent({
       { value: 'HexagonSpread', label: '六边形扩散' },
       { value: 'SpreadWall', label: '墙推扩散' },
     ])
+    const color = ref('rgba(19, 206, 102, 0.8)')
+    const duration = ref(3000)
+    const maxRadius = ref(1000)
+    let curEntityC = null
     const onReadyMap = () => {
       // 载入默认白膜
       const GTitleset = new Titleset(window.GController)
       GTitleset.init()
 
       // 首先增加一个效果 然后 手动更改其 颜色
-      const GEllipsoidFade = new EllipsoidFade(window.GController)
-      const eid = GEllipsoidFade.add([113.9303, 22.5216, 8], 'rgba(0,255,0,0.8)', 1000, 3000)
-      const curEntity = window.GController.entities.getById(eid)
-      // curEntity._ellipse._material.color = new Cesium.Color.fromCssColorString('rgba(0,0,255,0.8)')
-      debugger
-      console.log(curEntity)
+      curEntityC = new EllipsoidFade(window.GController, 'effect-co-1')
+      curEntityC.add([113.9303, 22.5216, 8], color.value, maxRadius.value, duration.value)
+    }
+    const change_color = (val: string) => {
+      if (curEntityC && window.GController.entities) {
+        const curEntity = window.GController.entities.getById(curEntityC.id)
+        curEntity._ellipse._material.color = new Cesium.Color.fromCssColorString(val)
+      }
+    }
+    const effect_duration_change = (val: number) => {
+      if (curEntityC && window.GController.entities) {
+        curEntityC.duration = val
+      }
+    }
+    const effect_maxRadius_change = (val: number) => {
+      if (curEntityC && window.GController.entities) {
+        curEntityC.maxRadius = val
+      }
     }
     return {
       onReadyMap,
       selEffect,
       effectsList,
+      change_color,
+      color,
+      duration,
+      effect_duration_change,
+      maxRadius,
+      effect_maxRadius_change
     }
   },
 })
 </script>
+<style lang="scss">
+.EffectCongfig {
+  .el-color-picker.el-color-picker--mini.color-pick-s{
+    position: relative;
+    top: 9px;
+    left: 11px;
+  }
+}
+</style>
 <style lang="scss" scoped>
 .EffectCongfig {
   position: absolute;

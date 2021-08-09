@@ -45,7 +45,7 @@ export default defineComponent({
       GTitleset.init()
 
       // 点扩散
-      const GEllipsoidFade = new EllipsoidFade(viewer)
+      const GEllipsoidFade = new EllipsoidFade(viewer, 'effect-01')
       GEllipsoidFade.add([113.9303 - 0.02, 22.5216, 8], 'rgba(0,255,0,0.8)', 1000, 3000)
 
       // RaderScan 雷达扫描
