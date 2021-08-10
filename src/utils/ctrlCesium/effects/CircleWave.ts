@@ -22,7 +22,7 @@ class CircleWave {
         semiMajorAxis: 600,
         material: new Cesium.CircleWaveMaterialProperty({
           duration: 2000,
-          gradient: 0, // 0
+          gradient: 0,
           color: new Cesium.Color.fromCssColorString(color),
           count: 3,
         }),

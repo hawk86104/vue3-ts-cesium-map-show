@@ -40,7 +40,8 @@ import CesiumContainer from '@/components/CesiumContainer.vue'
 import PannelBox from '@/components/PannelBox.vue'
 
 import Titleset from '@/utils/ctrlCesium/Titleset'
-import EllipsoidFade from '@/utils/ctrlCesium/effects/EllipsoidFade'
+// import EllipsoidFade from '@/utils/ctrlCesium/effects/EllipsoidFade'
+import HexagonSpread from '@/utils/ctrlCesium/effects/HexagonSpread'
 import { defineComponent, ref } from 'vue'
 declare global {
   interface Window {
@@ -71,7 +72,7 @@ export default defineComponent({
       GTitleset.init()
 
       // 首先增加一个效果 然后 手动更改其 颜色
-      curEntityC = new EllipsoidFade(window.GController, 'effect-co-1')
+      curEntityC = new HexagonSpread(window.GController, 'effect-co-1')
       curEntityC.add(positionEffect.value, color.value, maxRadius.value, duration.value)
       curEntityC.update_position = update_position
     }

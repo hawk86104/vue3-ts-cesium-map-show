@@ -57,7 +57,7 @@ export default defineComponent({
       GCircleWave.add([113.9303 + 0.015, 22.5216 + 0.01, 58], 'rgba(0,255,255,1)')
 
       // 六边形
-      const GHexagonSpread = new HexagonSpread(viewer)
+      const GHexagonSpread = new HexagonSpread(viewer, 'effect-02')
       GHexagonSpread.add([113.9303 + 0.015, 22.5216, 58], 'rgba(255,255,0,1)', 500, 3000)
 
       // 扩散墙
