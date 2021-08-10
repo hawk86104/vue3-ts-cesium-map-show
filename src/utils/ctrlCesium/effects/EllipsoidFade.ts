@@ -1,9 +1,47 @@
-// eslint-disable-line no-unused-vars
-/* eslint-disable no-debugger */
-import { init } from './MaterialProperty/EllipsoidFadeMaterialProperty'
+import Effect from './Effect'
+import { init as efmInit } from './MaterialProperty/EllipsoidFadeMaterialProperty'
 declare const Cesium: any
 // 扩散点 圆
-class EllipsoidFade {
+class EllipsoidFade extends Effect {
+  constructor(viewer: any, id: string) {
+    super(viewer, id)
+  }
+  add(position: any, color: string, maxRadius: number, duration: number) {
+    efmInit()
+    super.add(position, color, maxRadius, duration)
+    const _this = this
+    let currentRadius = 1
+    const entity = this.viewer.entities.add({
+      id: _this.id,
+      position: Cesium.Cartesian3.fromDegrees(
+        position[0],
+        position[1],
+        position[2]
+      ),
+      ellipse: {
+        // heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+        // extrudedHeightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+        // height: position[2],
+        // extrudedHeight: position[2], // 如果这里设置高度 那么就会直接穿透 不洒在建筑物上
+        semiMajorAxis: new Cesium.CallbackProperty(function(n: any) {
+          currentRadius += (1000 / _this.duration) * 50
+          if (currentRadius > _this.maxRadius) {
+            currentRadius = 1
+          }
+          return currentRadius
+        }, false),
+        semiMinorAxis: new Cesium.CallbackProperty(function(n: any) {
+          return currentRadius
+        }, false),
+        material: new Cesium.EllipsoidFadeMaterialProperty(
+          new Cesium.Color.fromCssColorString(color),
+          _this.duration
+        ),
+      },
+    })
+    return entity.id
+  }
+  /*
   viewer: any
   id: string
   duration: number
@@ -20,10 +58,8 @@ class EllipsoidFade {
     this.leftDownFlag = false
   }
   change_position(p: any) {
-    debugger
     const cartesian3 = Cesium.Cartesian3.fromDegrees(parseFloat(p[0]), parseFloat(p[1]), parseFloat(p[2]))
     const curEntity = this.viewer.entities.getById(this.id)
-    // cartesian3.z += parseFloat(p[2])
     curEntity.position = cartesian3
   }
   add(position: any, color: string, maxRadius: number, duration: number) {
@@ -53,7 +89,6 @@ class EllipsoidFade {
         const ray = _this.viewer.camera.getPickRay(e.endPosition)
         const cartesian = _this.viewer.scene.globe.pick(ray, _this.viewer.scene)
         _this.pointDraged.id.position = cartesian // 此处根据具体entity来处理，也可能是pointDraged.id.position=cartesian;
-        // console.log(cartesian)
         // 这里笛卡尔坐标转 经纬度
         const ellipsoid = _this.viewer.scene.globe.ellipsoid
         const cartographic = ellipsoid.cartesianToCartographic(cartesian)
@@ -61,7 +96,6 @@ class EllipsoidFade {
         const lng = Cesium.Math.toDegrees(cartographic.longitude)
         let alt = cartographic.height
         alt = alt < 0 ? 0 : alt
-        // console.log(lat.toFixed(6), lng.toFixed(6), alt)
         _this.update_position([lng.toFixed(8), lat.toFixed(8), alt])
       }
     }
@@ -77,7 +111,7 @@ class EllipsoidFade {
       mouseMoveAction,
       Cesium.ScreenSpaceEventType.MOUSE_MOVE
     )
-    init()
+    efmInit()
     this.duration = duration
     this.maxRadius = maxRadius
     let currentRadius = 1
@@ -114,5 +148,6 @@ class EllipsoidFade {
     this.id = entity.id
     return entity.id
   }
+*/
 }
 export default EllipsoidFade

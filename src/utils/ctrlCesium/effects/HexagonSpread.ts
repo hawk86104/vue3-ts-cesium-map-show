@@ -1,17 +1,18 @@
-// eslint-disable-line no-unused-vars
-/* eslint-disable no-debugger */
+import Effect from './Effect'
 import { init } from './MaterialProperty/HexagonSpreadMaterialProperty'
 declare const Cesium: any
 // 六边形扩散效果
-class HexagonSpread {
-  viewer: any
-  constructor(viewer: any) {
-    this.viewer = viewer
+class HexagonSpread extends Effect {
+  constructor(viewer: any, id: string) {
+    super(viewer, id)
   }
   add(position: any, color: string, maxRadius: number, duration: number) {
     init()
-    let start = 0.1
+    super.add(position, color, maxRadius, duration)
+    const _this = this
+    let currentRadius = 1
     this.viewer.entities.add({
+      id: _this.id,
       position: Cesium.Cartesian3.fromDegrees(
         position[0],
         position[1],
@@ -19,14 +20,14 @@ class HexagonSpread {
       ),
       ellipse: {
         semiMajorAxis: new Cesium.CallbackProperty(function(n: any) {
-          start += maxRadius / (duration / 50)
-          if (start > maxRadius + 0.1) {
-            start = 0.1
+          currentRadius += (1000 / _this.duration) * 50
+          if (currentRadius > _this.maxRadius) {
+            currentRadius = 1
           }
-          return start
+          return currentRadius
         }, false),
         semiMinorAxis: new Cesium.CallbackProperty(function(n: any) {
-          return start
+          return currentRadius
         }, false),
         material: new Cesium.HexagonSpreadMaterialProperty(
           new Cesium.Color.fromCssColorString(color)
