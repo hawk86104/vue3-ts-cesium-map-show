@@ -16,8 +16,21 @@ class Effect {
     this.pointDraged = null
     this.leftDownFlag = false
   }
+  change_duration(d: number) {
+    this.duration = d
+  }
+  change_color(val: string) {
+    const curEntity = this.viewer.entities.getById(this.id)
+    curEntity._ellipse._material.color = new Cesium.Color.fromCssColorString(
+      val
+    )
+  }
   change_position(p: any) {
-    const cartesian3 = Cesium.Cartesian3.fromDegrees(parseFloat(p[0]), parseFloat(p[1]), parseFloat(p[2]))
+    const cartesian3 = Cesium.Cartesian3.fromDegrees(
+      parseFloat(p[0]),
+      parseFloat(p[1]),
+      parseFloat(p[2])
+    )
     const curEntity = this.viewer.entities.getById(this.id)
     curEntity.position = cartesian3
   }
@@ -55,7 +68,9 @@ class Effect {
         const lng = Cesium.Math.toDegrees(cartographic.longitude)
         let alt = cartographic.height
         alt = alt < 0 ? 0 : alt
-        _this.update_position([lng.toFixed(8), lat.toFixed(8), alt])
+        if (_this.update_position) {
+          _this.update_position([lng.toFixed(8), lat.toFixed(8), alt])
+        }
       }
     }
     this.viewer.screenSpaceEventHandler.setInputAction(

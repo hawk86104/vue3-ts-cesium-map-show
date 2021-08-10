@@ -20,6 +20,7 @@ Object.defineProperties(ScanlineMaterialProperty.prototype, {
     },
   },
   color: Cesium.createPropertyDescriptor('color'),
+  speed: Cesium.createPropertyDescriptor('speed'),
 })
 
 ScanlineMaterialProperty.prototype.getType = function(_time: any) {
@@ -42,14 +43,14 @@ ScanlineMaterialProperty.prototype.getValue = function(
   return result
 }
 interface Other_tmp {
-  color: any,
-  speed: any,
+  color: any
+  speed: any
 }
 ScanlineMaterialProperty.prototype.equals = function(other: Other_tmp) {
   const reData =
     this === other ||
     (other instanceof ScanlineMaterialProperty &&
-      Cesium.Property.equals(this.color, other.color)&&
+      Cesium.Property.equals(this.color, other.color) &&
       Cesium.Property.equals(this.speed, other.speed))
   return reData
 }
@@ -69,7 +70,7 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
   vec2 st = materialInput.st - 0.5;
   material.diffuse =2.8 * color.rgb;
   material.emission = vec3(0);
-  float t =fract(czm_frameNumber * speed / 1000.0);
+  float t = fract(czm_frameNumber * (11000.0 - speed) / 500000.0);
   float s = 0.3;
   float radius1 = smoothstep(.0, s, t) * 0.5;
   float alpha1 = circle(st, radius1, 0.01) * circle(st, radius1, -0.01);
@@ -83,18 +84,18 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 `
 Cesium.Material._materialCache.addMaterial(Cesium.Material.ScanlineType, {
   fabric: {
-      type: Cesium.Material.ScanlineType,
-      uniforms: {
-          color: new Cesium.Color(1,0,0,.5),
-          time: 0,
-          speed: 10
-      },
-      source: Cesium.Material.ScanlineSource
+    type: Cesium.Material.ScanlineType,
+    uniforms: {
+      color: new Cesium.Color(1, 0, 0, 0.5),
+      time: 0,
+      speed: 10,
+    },
+    source: Cesium.Material.ScanlineSource,
   },
   translucent: function(t: any) {
-      return true
-  }
-});
+    return true
+  },
+})
 
 function init() {
   console.log('ScanlineMaterialProperty init')
