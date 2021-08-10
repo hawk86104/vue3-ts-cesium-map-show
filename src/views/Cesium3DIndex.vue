@@ -66,8 +66,8 @@ export default defineComponent({
       GSpreadWall.add([113.9303 - 0.005, 22.5216 - 0.015, 0], 'rgba(18,255,188,0.8)', 1000, 200, 500, 8) // 最后是墙高 和 多边形
 
       // 线圈扩散效果
-      const GScanline = new Scanline(viewer)
-      GScanline.add([113.9303 - 0.01, 22.5216 - 0.020, 0], 'rgba(251,16,55,0.8)', 5000, 10)
+      const GScanline = new Scanline(viewer, 'effect-03')
+      GScanline.add([113.9303 - 0.01, 22.5216 - 0.020, 0], 'rgba(251,16,55,0.8)', 5000, 3000)
 
       // 精灵路
       // const GSpriteline = new Spriteline(viewer)

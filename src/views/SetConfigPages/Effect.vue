@@ -41,7 +41,8 @@ import PannelBox from '@/components/PannelBox.vue'
 
 import Titleset from '@/utils/ctrlCesium/Titleset'
 // import EllipsoidFade from '@/utils/ctrlCesium/effects/EllipsoidFade'
-import HexagonSpread from '@/utils/ctrlCesium/effects/HexagonSpread'
+// import HexagonSpread from '@/utils/ctrlCesium/effects/HexagonSpread'
+import Scanline from '@/utils/ctrlCesium/effects/Scanline'
 import { defineComponent, ref } from 'vue'
 declare global {
   interface Window {
@@ -72,7 +73,7 @@ export default defineComponent({
       GTitleset.init()
 
       // 首先增加一个效果 然后 手动更改其 颜色
-      curEntityC = new HexagonSpread(window.GController, 'effect-co-1')
+      curEntityC = new Scanline(window.GController, 'effect-co-1')
       curEntityC.add(positionEffect.value, color.value, maxRadius.value, duration.value)
       curEntityC.update_position = update_position
     }
@@ -84,13 +85,12 @@ export default defineComponent({
     }
     const change_color = (val: string) => {
       if (curEntityC && window.GController.entities) {
-        const curEntity = window.GController.entities.getById(curEntityC.id)
-        curEntity._ellipse._material.color = new Cesium.Color.fromCssColorString(val)
+        curEntityC.change_color(val)
       }
     }
     const effect_duration_change = (val: number) => {
       if (curEntityC && window.GController.entities) {
-        curEntityC.duration = val
+        curEntityC.change_duration(val)
       }
     }
     const effect_maxRadius_change = (val: number) => {

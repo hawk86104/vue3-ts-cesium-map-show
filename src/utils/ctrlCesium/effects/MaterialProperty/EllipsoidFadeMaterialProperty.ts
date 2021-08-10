@@ -27,7 +27,7 @@ Object.defineProperties(EllipsoidFadeMaterialProperty.prototype, {
       return this._definitionChanged
     },
   },
-  color: Cesium.createPropertyDescriptor('color'),
+  color: Cesium.createPropertyDescriptor('color')
 })
 EllipsoidFadeMaterialProperty.prototype.getType = function(time: number) {
   return 'EllipsoidFade'
