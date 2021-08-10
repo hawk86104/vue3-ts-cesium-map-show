@@ -15,12 +15,18 @@
                 >
                 </el-option>
               </el-select><br><br>
+              <span class='c_title'>lon经度：</span>
+              <el-input class="input_c_p" size="small" v-model="positionEffect[0]" @change="effect_position_change"></el-input><br><br>
+              <span class='c_title'>lat纬度：</span>
+              <el-input class="input_c_p" size="small" v-model="positionEffect[1]" @change="effect_position_change"></el-input><br><br>
+              <span class='c_title'>高度(米)：{洒在建筑物上，无效}</span>
+              <el-input class="input_c_p" size="small" v-model="positionEffect[2]" @change="effect_position_change"></el-input><br><br>
               <span class='c_title'>效果颜色：{{color}}</span>
               <el-color-picker v-model="color" show-alpha size="mini" class="color-pick-s" @active-change="change_color"></el-color-picker><br><br>
               <span class='c_title'>效果延迟：{{duration}} 毫秒</span>
-              <el-slider v-model="duration" :min="500" :max="10000" :step="500" @input="effect_duration_change"></el-slider><br><br>
+              <el-slider v-model="duration" :min="500" :max="10000" :step="500" @input="effect_duration_change"></el-slider><br>
               <span class='c_title'>最大半径：{{maxRadius}} 米</span>
-              <el-slider v-model="maxRadius" :min="500" :max="10000" :step="500" @input="effect_maxRadius_change"></el-slider><br><br>
+              <el-slider v-model="maxRadius" :min="500" :max="10000" :step="500" @input="effect_maxRadius_change"></el-slider><br>
             </div>
           </template>
         </PannelBox>
@@ -57,6 +63,7 @@ export default defineComponent({
     const color = ref('rgba(19, 206, 102, 0.8)')
     const duration = ref(3000)
     const maxRadius = ref(1000)
+    const positionEffect = ref([113.9303, 22.5216, 0])
     let curEntityC = null
     const onReadyMap = () => {
       // 载入默认白膜
@@ -65,7 +72,14 @@ export default defineComponent({
 
       // 首先增加一个效果 然后 手动更改其 颜色
       curEntityC = new EllipsoidFade(window.GController, 'effect-co-1')
-      curEntityC.add([113.9303, 22.5216, 8], color.value, maxRadius.value, duration.value)
+      curEntityC.add(positionEffect.value, color.value, maxRadius.value, duration.value)
+      curEntityC.update_position = update_position
+    }
+    const update_position = (ob: any) => {
+      positionEffect.value = ob
+    }
+    const effect_position_change = (e: any) => {
+      curEntityC.change_position(positionEffect.value)
     }
     const change_color = (val: string) => {
       if (curEntityC && window.GController.entities) {
@@ -92,7 +106,9 @@ export default defineComponent({
       duration,
       effect_duration_change,
       maxRadius,
-      effect_maxRadius_change
+      effect_maxRadius_change,
+      positionEffect,
+      effect_position_change
     }
   },
 })
@@ -114,9 +130,13 @@ export default defineComponent({
   .effect_con{
     margin-top: 10px;
     text-align: left;
+    width: 20em;
     .c_title{
       color: white;
       font-size: 0.8em;
+    }
+    .input_c_p{
+      // width: 16em;
     }
   }
 }
