@@ -25,12 +25,12 @@ class RaderScan extends Effect {
 
     // 因为画布内变化CallbackProperty监控不到，所以用两个画布切换的方式达成效果
     let linkA = document.createElement('canvas')
-    linkA.setAttribute('width', '3000px')
-    linkA.setAttribute('height', '3000px')
+    linkA.setAttribute('width', '800px')
+    linkA.setAttribute('height', '800px')
     linkA.setAttribute('id', 'canvas-a')
     let linkB = document.createElement('canvas')
-    linkB.setAttribute('width', '3000px')
-    linkB.setAttribute('height', '3000px')
+    linkB.setAttribute('width', '800px')
+    linkB.setAttribute('height', '800px')
     linkB.setAttribute('id', 'canvas-b')
     let canvasCollection: any = linkA
 
@@ -76,11 +76,11 @@ class RaderScan extends Effect {
             grd.addColorStop(1, scanColor1)
             context.fillStyle = grd
             context.beginPath()
-            context.moveTo(1500, 1500)
+            context.moveTo(400, 400)
             context.arc(
-              1500,
-              1500,
-              1500,
+              400,
+              400,
+              400,
               (-30 / 180) * Math.PI,
               (0 / 180) * Math.PI
             )
