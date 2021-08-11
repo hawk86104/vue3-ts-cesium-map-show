@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-declare const Cesium: any
+
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({

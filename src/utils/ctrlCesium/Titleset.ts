@@ -1,5 +1,5 @@
 /* eslint-disable no-debugger */
-declare const Cesium: any
+
 import { getTitlesetList, getOneTitleset } from '@/api/titleset'
 import { colorRgb1 } from '@/utils/color'
 class Titleset {

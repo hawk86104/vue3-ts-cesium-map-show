@@ -1,6 +1,6 @@
 /* eslint-disable no-debugger */
 // 墙推动扩散效果
-declare const Cesium: any
+
 
 function WallGradientsMaterialProperty(color: any) {
   this._definitionChanged = new Cesium.Event()

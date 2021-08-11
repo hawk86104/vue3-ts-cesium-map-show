@@ -23,10 +23,16 @@
               <el-input class="input_c_p" size="small" v-model="positionEffect[2]" @change="effect_position_change"></el-input><br><br>
               <span class='c_title'>效果颜色：{{color}}</span>
               <el-color-picker v-model="color" show-alpha size="mini" class="color-pick-s" @active-change="change_color"></el-color-picker><br><br>
-              <span class='c_title'>效果延迟：{{duration}} 毫秒</span>
-              <el-slider v-model="duration" :min="500" :max="10000" :step="500" @input="effect_duration_change"></el-slider><br>
               <span class='c_title'>最大半径：{{maxRadius}} 米</span>
               <el-slider v-model="maxRadius" :min="200" :max="10000" :step="200" @input="effect_maxRadius_change"></el-slider><br>
+              <template v-if="selEffect!=='CircleScan'">
+                <span class='c_title'>效果延迟：{{duration}} 毫秒</span>
+                <el-slider v-model="duration" :min="500" :max="10000" :step="500" @input="effect_duration_change"></el-slider><br>
+              </template>
+              <template v-if="selEffect==='CircleScan'">
+                <span class='c_title'>步长：{{step}} </span>
+                <el-slider v-model="step" :min="-0.3" :max="0.3" :step="0.005" @input="effect_step_change"></el-slider><br>
+              </template>
               <template v-if="selEffect==='CircleWave'">
                 <span class='c_title'>波浪条纹数：{{waveCount}} 个</span>
                 <el-slider v-model="waveCount" :min="1" :max="10" :step="1" @input="effect_waveCount_change"></el-slider><br>
@@ -48,13 +54,14 @@ import EllipsoidFade from '@/utils/ctrlCesium/effects/EllipsoidFade'
 import HexagonSpread from '@/utils/ctrlCesium/effects/HexagonSpread'
 import Scanline from '@/utils/ctrlCesium/effects/Scanline'
 import CircleWave from '@/utils/ctrlCesium/effects/CircleWave'
+import RaderScan from '@/utils/ctrlCesium/effects/RaderScan'
 import { defineComponent, ref } from 'vue'
 declare global {
   interface Window {
     GController: any
   }
 }
-declare const Cesium: any
+
 export default defineComponent({
   name: 'EffectCongfig',
   components: { CesiumContainer, PannelBox },
@@ -65,13 +72,14 @@ export default defineComponent({
       { value: 'Scanline', label: '线圈发光扩散' },
       { value: 'CircleWave', label: '水波纹' },
       { value: 'HexagonSpread', label: '六边形扩散' },
-      { value: 'SpreadWall', label: '墙推扩散' },
       { value: 'CircleScan', label: '雷达圆扫' },
+      { value: 'SpreadWall', label: '墙推扩散' },
     ])
     const color = ref('rgba(19, 206, 102, 0.8)')
     const duration = ref(3000)
     const maxRadius = ref(1000)
     const waveCount = ref(3)
+    const step = ref(-0.01)
     const positionEffect = ref([113.9303, 22.5216, 0])
     let curEntityC = null
     const onReadyMap = () => {
@@ -105,6 +113,10 @@ export default defineComponent({
           curEntityC = new HexagonSpread(window.GController, 'effect-set-config' + e)
           curEntityC.add(pe, color.value, maxRadius.value, duration.value)
           break
+        case 'CircleScan':
+          curEntityC = new RaderScan(window.GController, 'effect-set-config' + e)
+          curEntityC.add(pe, color.value, maxRadius.value, step.value)
+          break
         default:
       }
       curEntityC.update_position = update_position
@@ -135,6 +147,11 @@ export default defineComponent({
         curEntityC.change_waveCount(val)
       }
     }
+    const effect_step_change = (val: number) => {
+      if (curEntityC && window.GController.entities) {
+        curEntityC.change_step(val)
+      }
+    }
     return {
       onReadyMap,
       selEffect,
@@ -149,7 +166,9 @@ export default defineComponent({
       effect_position_change,
       waveCount,
       effect_waveCount_change,
-      effect_selEffect_change
+      effect_selEffect_change,
+      step,
+      effect_step_change,
     }
   },
 })

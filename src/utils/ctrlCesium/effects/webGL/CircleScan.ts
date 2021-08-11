@@ -1,4 +1,4 @@
-declare const Cesium: any
+
 // 雷达圆扫
 class CircleScan {
   viewer: any

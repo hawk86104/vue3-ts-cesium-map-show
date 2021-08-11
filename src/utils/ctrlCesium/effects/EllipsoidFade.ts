@@ -1,6 +1,6 @@
 import Effect from './Effect'
 import { init as efmInit } from './MaterialProperty/EllipsoidFadeMaterialProperty'
-declare const Cesium: any
+
 // 扩散点 圆
 class EllipsoidFade extends Effect {
   constructor(viewer: any, id: string) {

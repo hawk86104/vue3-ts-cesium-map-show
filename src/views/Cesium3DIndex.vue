@@ -13,7 +13,7 @@ import ButtonTools from '@/components/ButtonTools.vue'
 declare global {
     interface Window { GController: any; }
 }
-// declare const Cesium: any
+// 
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import EllipsoidFade from '@/utils/ctrlCesium/effects/EllipsoidFade'
 import RaderScan from '@/utils/ctrlCesium/effects/RaderScan'
@@ -49,11 +49,11 @@ export default defineComponent({
       GEllipsoidFade.add([113.9303 - 0.02, 22.5216, 8], 'rgba(0,255,0,0.8)', 1000, 3000)
 
       // RaderScan 雷达扫描
-      const GRaderScan = new RaderScan(viewer)
+      const GRaderScan = new RaderScan(viewer, 'effect-05')
       GRaderScan.add([113.9303 - 0.01, 22.5216, 0], 'rgba(0,255,0,1)', 1000, -0.02)
 
       // 圈波纹
-      const GCircleWave = new CircleWave(viewer, 'effect-01')
+      const GCircleWave = new CircleWave(viewer, 'effect-04')
       GCircleWave.add([113.9303 + 0.015, 22.5216 + 0.01, 58], 'rgba(0,255,255,1)', 1000, 3000)
 
       // 六边形

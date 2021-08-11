@@ -1,7 +1,7 @@
 // HexagonSpreadMaterialProperty
 /* eslint-disable no-debugger */
 // 六边形扩散效果
-declare const Cesium: any
+
 
 function HexagonSpreadMaterialProperty(color: any) {
   this._definitionChanged = new Cesium.Event()

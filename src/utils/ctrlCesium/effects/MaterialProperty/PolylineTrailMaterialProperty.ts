@@ -1,5 +1,5 @@
 // /* eslint-disable no-debugger */
-// declare const Cesium: any
+// 
 // function PolylineTrailMaterialProperty(ob: any) {
 //   this._definitionChanged = new Cesium.Event()
 //   this.colorSubscription = void 0

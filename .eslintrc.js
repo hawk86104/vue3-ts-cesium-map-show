@@ -16,6 +16,7 @@ module.exports = {
     ecmaVersion: 2020,
   },
   rules: {
+    'prefer-const': 'off',
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": ["off"],
     "@typescript-eslint/no-this-alias": ["off"],
@@ -61,7 +62,6 @@ module.exports = {
       'asyncArrow': 'always',
     }],
     'keyword-spacing': ['error'],
-    'prefer-const': 'error',
     'no-useless-return': 'error',
     'array-bracket-spacing': 'error',
     'no-useless-escape': 'off',

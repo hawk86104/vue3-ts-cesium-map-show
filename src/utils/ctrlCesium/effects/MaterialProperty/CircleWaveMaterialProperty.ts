@@ -1,7 +1,7 @@
 
 /* eslint-disable no-debugger */
 // 水波纹圈扩散效果
-declare const Cesium: any
+
 /**
  *
  * @param {*} color  颜色

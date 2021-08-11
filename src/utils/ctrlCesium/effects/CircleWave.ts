@@ -1,8 +1,5 @@
-// eslint-disable-line no-unused-vars
-/* eslint-disable no-debugger */
 import Effect from './Effect'
 import { init } from './MaterialProperty/CircleWaveMaterialProperty'
-declare const Cesium: any
 // 水波纹
 class CircleWave extends Effect {
   count: number
