@@ -1,6 +1,6 @@
 /* eslint no-multi-str: "off" */
 /* eslint-disable no-debugger */
-declare const Cesium: any
+
 // import Cesium from './Cesium'
 import { colorRgb } from '@/utils/color'
 import { evil } from '@/utils/common'

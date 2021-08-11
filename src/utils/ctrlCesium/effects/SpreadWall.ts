@@ -1,7 +1,7 @@
 // eslint-disable-line no-unused-vars
 /* eslint-disable no-debugger */
 import { init } from './MaterialProperty/WallGradientsMaterialProperty'
-declare const Cesium: any
+
 // 推动墙扩散
 class SpreadWall {
   viewer: any

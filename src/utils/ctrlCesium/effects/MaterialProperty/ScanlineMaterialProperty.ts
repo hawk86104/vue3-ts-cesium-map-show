@@ -1,6 +1,6 @@
 /* eslint-disable no-debugger */
 // 线圈发光扩散材质效果
-declare const Cesium: any
+
 
 function ScanlineMaterialProperty(color: any, speed: any) {
   this._definitionChanged = new Cesium.Event()

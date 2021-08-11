@@ -1,6 +1,6 @@
 /* eslint-disable no-debugger */
 // 精灵穿梭路 光效果
-declare const Cesium: any
+
 
 function Spriteline1MaterialProperty(i: any) {
   this._definitionChanged = new Cesium.Event()

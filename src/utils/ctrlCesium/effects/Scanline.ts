@@ -1,7 +1,7 @@
 /* eslint-disable no-debugger */
 import Effect from './Effect'
 import { init } from './MaterialProperty/ScanlineMaterialProperty'
-declare const Cesium: any
+
 // 线圈发光扩散效果
 class Scanline extends Effect {
   constructor(viewer: any, id: string) {

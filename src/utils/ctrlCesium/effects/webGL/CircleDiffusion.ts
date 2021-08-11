@@ -1,4 +1,3 @@
-declare const Cesium: any
 // 圆扩散
 class CircleDiffusion {
   viewer: any

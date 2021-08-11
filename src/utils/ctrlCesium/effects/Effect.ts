@@ -1,5 +1,5 @@
 /* eslint-disable no-debugger */
-declare const Cesium: any
+
 // 点效果集合 父类
 class Effect {
   viewer: any

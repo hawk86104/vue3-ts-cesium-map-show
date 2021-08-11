@@ -11,7 +11,7 @@
 declare global {
   interface Window { GController: any; }
 }
-declare const Cesium: any
+
 import { defineComponent, onBeforeMount, ref } from 'vue'
 import { getMapView, setMapView } from '@/api/base'
 import { zipObject, map} from 'lodash'

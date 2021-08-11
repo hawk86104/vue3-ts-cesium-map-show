@@ -1,7 +1,7 @@
 // eslint-disable-line no-unused-vars
 /* eslint-disable no-debugger */
 import { init } from './MaterialProperty/Spriteline1MaterialProperty'
-declare const Cesium: any
+
 
 class Spriteline {
   viewer: any

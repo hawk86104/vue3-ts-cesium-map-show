@@ -2,7 +2,7 @@
  * EllipsoidFadeMaterialProperty扩散点材质类 不会覆盖在白膜上
  */
 /* eslint-disable no-debugger */
-declare const Cesium: any
+
 /**
  * 流动纹理线
  * @param {*} color 颜色

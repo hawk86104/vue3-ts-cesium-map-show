@@ -1,6 +1,6 @@
 import Effect from './Effect'
 import { init } from './MaterialProperty/HexagonSpreadMaterialProperty'
-declare const Cesium: any
+
 // 六边形扩散效果
 class HexagonSpread extends Effect {
   constructor(viewer: any, id: string) {
