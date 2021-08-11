@@ -1,3 +1,4 @@
+
 /* eslint-disable no-debugger */
 // 水波纹圈扩散效果
 declare const Cesium: any
@@ -39,6 +40,8 @@ Object.defineProperties(CircleWaveMaterialProperty.prototype, {
     },
   },
   color: Cesium.createPropertyDescriptor('color'),
+  duration: Cesium.createPropertyDescriptor('duration'),
+  count: Cesium.createPropertyDescriptor('count'),
 })
 CircleWaveMaterialProperty.prototype.getType = function(_time: any) {
   return Cesium.Material.CircleWaveMaterialType

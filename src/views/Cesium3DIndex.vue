@@ -53,8 +53,8 @@ export default defineComponent({
       GRaderScan.add([113.9303 - 0.01, 22.5216, 0], 'rgba(0,255,0,1)', 1000, -0.02)
 
       // 圈波纹
-      const GCircleWave = new CircleWave(viewer)
-      GCircleWave.add([113.9303 + 0.015, 22.5216 + 0.01, 58], 'rgba(0,255,255,1)')
+      const GCircleWave = new CircleWave(viewer, 'effect-01')
+      GCircleWave.add([113.9303 + 0.015, 22.5216 + 0.01, 58], 'rgba(0,255,255,1)', 1000, 3000)
 
       // 六边形
       const GHexagonSpread = new HexagonSpread(viewer, 'effect-02')

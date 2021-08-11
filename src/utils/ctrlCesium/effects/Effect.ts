@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 declare const Cesium: any
 // 点效果集合 父类
 class Effect {
@@ -33,6 +34,9 @@ class Effect {
     )
     const curEntity = this.viewer.entities.getById(this.id)
     curEntity.position = cartesian3
+  }
+  del() {
+    this.viewer.entities.removeById(this.id)
   }
   add(position: any, color: string, maxRadius: number, duration: number) {
     const _this = this
