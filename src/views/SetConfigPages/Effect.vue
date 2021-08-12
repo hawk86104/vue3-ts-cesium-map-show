@@ -54,6 +54,7 @@
 /* eslint-disable no-debugger */
 import CesiumContainer from '@/components/CesiumContainer.vue'
 import PannelBox from '@/components/PannelBox.vue'
+import { getUrlKey } from '@/utils/common'
 
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import EllipsoidFade from '@/utils/ctrlCesium/effects/EllipsoidFade'
@@ -68,7 +69,20 @@ declare global {
     GController: any
   }
 }
-
+const getUrlParma = (p: string, type = 'string'): any => {
+  let UrlParma:any = getUrlKey(p, window.location.href)
+  if (type === 'int') {
+    return parseInt(UrlParma)
+  }
+  if (type === 'float') {
+    return parseFloat(UrlParma)
+  }
+  if (UrlParma && type === 'array') {
+    UrlParma = UrlParma.split(',')
+    return [parseFloat(UrlParma[0]), parseFloat(UrlParma[1]), parseFloat(UrlParma[2])]
+  }
+  return UrlParma
+}
 export default defineComponent({
   name: 'EffectCongfig',
   components: { CesiumContainer, PannelBox },
@@ -83,13 +97,21 @@ export default defineComponent({
       { value: 'SpreadWall', label: '墙推扩散' },
     ])
     const color = ref('rgba(19, 206, 102, 0.8)')
+    color.value = getUrlParma('color') ? getUrlParma('color') : color.value
     const duration = ref(3000)
+    duration.value = getUrlParma('duration', 'int') ? getUrlParma('duration', 'int') : duration.value
     const maxRadius = ref(1000)
+    maxRadius.value = getUrlParma('maxRadius', 'int') ? getUrlParma('maxRadius', 'int') : maxRadius.value
     const waveCount = ref(3)
+    waveCount.value = getUrlParma('waveCount', 'int') ? getUrlParma('waveCount', 'int') : waveCount.value
     const step = ref(-0.01)
+    step.value = getUrlParma('step', 'float') ? getUrlParma('step', 'float') : step.value
     const height = ref(500)
+    height.value = getUrlParma('height', 'int') ? getUrlParma('height', 'int') : height.value
     const edgeCount = ref(5)
+    edgeCount.value = getUrlParma('edgeCount', 'int') ? getUrlParma('edgeCount', 'int') : edgeCount.value
     const positionEffect = ref([113.9303, 22.5216, 0])
+    positionEffect.value = getUrlParma('position', 'array') ? getUrlParma('position', 'array') : positionEffect.value
     let curEntityC = null
     const onReadyMap = () => {
       // 载入默认白膜
