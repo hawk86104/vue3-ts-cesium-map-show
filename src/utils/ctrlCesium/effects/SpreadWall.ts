@@ -13,6 +13,7 @@ class SpreadWall {
   update_position: any
   wallHeight: number
   position: any
+  edgeCount: number
   constructor(viewer: any, id: string) {
     this.viewer = viewer
     this.id = id
@@ -20,6 +21,8 @@ class SpreadWall {
     this.maxRadius = 1000
     this.pointDraged = null
     this.leftDownFlag = false
+    this.position = null
+    this.edgeCount = 0
   }
   del() {
     this.viewer.entities.removeById(this.id)
@@ -68,6 +71,7 @@ class SpreadWall {
     this.wallHeight = wallHeight
     this.duration = duration
     this.maxRadius = maxRadius
+    this.edgeCount = edgeCount
 
     let currentRadius = maxRadius
     let rPositions = this.getrPositions({}, maxRadius, position, edgeCount, currentRadius)
@@ -82,10 +86,10 @@ class SpreadWall {
           const reData = _this.getPositions(
             currentRadius,
             _this.maxRadius,
-            _this.getrPositions(rPositions, _this.maxRadius, _this.position, edgeCount, currentRadius),
+            _this.getrPositions(rPositions, _this.maxRadius, _this.position, _this.edgeCount, currentRadius),
             _this.getcenterDegrees(_this.position),
             _this.duration,
-            edgeCount
+            _this.edgeCount
           )
           currentRadius = reData.currentRadius
           rPositions = reData.rPositions
@@ -224,7 +228,7 @@ class SpreadWall {
   generateCirclePoints(t: any, e: any, edgeCount: number) {
     const n = []
     if (edgeCount) {
-      for (let i = 360 / 6, r = 0; r <= 360; r += i) {
+      for (let i = 360 / edgeCount, r = 0; r <= 360; r += i) {
         n.push(this.getCirclePoint(t[0], t[1], r, e))
       }
     }
