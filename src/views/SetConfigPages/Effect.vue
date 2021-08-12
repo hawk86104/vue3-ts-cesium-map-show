@@ -37,6 +37,10 @@
                 <span class='c_title'>波浪条纹数：{{waveCount}} 个</span>
                 <el-slider v-model="waveCount" :min="1" :max="10" :step="1" @input="effect_waveCount_change"></el-slider><br>
               </template>
+              <template v-if="selEffect==='SpreadWall'">
+                <span class='c_title'>效果墙高度：{{height}} 米</span>
+                <el-slider v-model="height" :min="0" :max="1000" :step="20" @input="effect_height_change"></el-slider><br>
+              </template>
             </div>
           </template>
         </PannelBox>
@@ -55,6 +59,7 @@ import HexagonSpread from '@/utils/ctrlCesium/effects/HexagonSpread'
 import Scanline from '@/utils/ctrlCesium/effects/Scanline'
 import CircleWave from '@/utils/ctrlCesium/effects/CircleWave'
 import RaderScan from '@/utils/ctrlCesium/effects/RaderScan'
+import SpreadWall from '@/utils/ctrlCesium/effects/SpreadWall'
 import { defineComponent, ref } from 'vue'
 declare global {
   interface Window {
@@ -80,6 +85,7 @@ export default defineComponent({
     const maxRadius = ref(1000)
     const waveCount = ref(3)
     const step = ref(-0.01)
+    const height = ref(500)
     const positionEffect = ref([113.9303, 22.5216, 0])
     let curEntityC = null
     const onReadyMap = () => {
@@ -117,6 +123,10 @@ export default defineComponent({
           curEntityC = new RaderScan(window.GController, 'effect-set-config' + e)
           curEntityC.add(pe, color.value, maxRadius.value, step.value)
           break
+        case 'SpreadWall':
+          curEntityC = new SpreadWall(window.GController, 'effect-set-config' + e)
+          curEntityC.add(pe, color.value, maxRadius.value, duration.value, 500)
+          break
         default:
       }
       curEntityC.update_position = update_position
@@ -126,6 +136,11 @@ export default defineComponent({
     }
     const effect_position_change = (e: any) => {
       curEntityC.change_position(positionEffect.value)
+    }
+    const effect_height_change = (val: number) => {
+      if (curEntityC && window.GController.entities) {
+        curEntityC.change_height(val)
+      }
     }
     const change_color = (val: string) => {
       if (curEntityC && window.GController.entities) {
@@ -169,6 +184,8 @@ export default defineComponent({
       effect_selEffect_change,
       step,
       effect_step_change,
+      height,
+      effect_height_change
     }
   },
 })
