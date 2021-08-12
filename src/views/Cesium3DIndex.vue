@@ -61,7 +61,7 @@ export default defineComponent({
       GHexagonSpread.add([113.9303 + 0.015, 22.5216, 58], 'rgba(255,255,0,1)', 500, 3000)
 
       // 扩散墙
-      const GSpreadWall = new SpreadWall(viewer)
+      const GSpreadWall = new SpreadWall(viewer, 'effect-06')
       GSpreadWall.add([113.9303 + 0.005, 22.5216 - 0.015, 0], 'rgba(255,0,255,0.5)', 5000, 100, 300)
       GSpreadWall.add([113.9303 - 0.005, 22.5216 - 0.015, 0], 'rgba(18,255,188,0.8)', 1000, 200, 500, 8) // 最后是墙高 和 多边形
 
