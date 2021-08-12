@@ -40,6 +40,8 @@
               <template v-if="selEffect==='SpreadWall'">
                 <span class='c_title'>效果墙高度：{{height}} 米</span>
                 <el-slider v-model="height" :min="0" :max="1000" :step="20" @input="effect_height_change"></el-slider><br>
+                <span class='c_title'>多边形边数：{{edgeCount}} 个{0为圆形}</span>
+                <el-slider v-model="edgeCount" :min="0" :max="10" :step="1" @input="effect_edgeCount_change"></el-slider><br>
               </template>
             </div>
           </template>
@@ -86,6 +88,7 @@ export default defineComponent({
     const waveCount = ref(3)
     const step = ref(-0.01)
     const height = ref(500)
+    const edgeCount = ref(5)
     const positionEffect = ref([113.9303, 22.5216, 0])
     let curEntityC = null
     const onReadyMap = () => {
@@ -125,7 +128,7 @@ export default defineComponent({
           break
         case 'SpreadWall':
           curEntityC = new SpreadWall(window.GController, 'effect-set-config' + e)
-          curEntityC.add(pe, color.value, maxRadius.value, duration.value, 500)
+          curEntityC.add(pe, color.value, maxRadius.value, duration.value, height.value, edgeCount.value)
           break
         default:
       }
@@ -140,6 +143,11 @@ export default defineComponent({
     const effect_height_change = (val: number) => {
       if (curEntityC && window.GController.entities) {
         curEntityC.change_height(val)
+      }
+    }
+    const effect_edgeCount_change = (val: number) => {
+      if (curEntityC && window.GController.entities) {
+        curEntityC.edgeCount = val
       }
     }
     const change_color = (val: string) => {
@@ -185,7 +193,9 @@ export default defineComponent({
       step,
       effect_step_change,
       height,
-      effect_height_change
+      effect_height_change,
+      edgeCount,
+      effect_edgeCount_change
     }
   },
 })
