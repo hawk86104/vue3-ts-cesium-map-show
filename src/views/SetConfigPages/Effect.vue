@@ -19,8 +19,10 @@
               <el-input class="input_c_p" size="small" v-model="positionEffect[0]" @change="effect_position_change"></el-input><br><br>
               <span class='c_title'>lat纬度：</span>
               <el-input class="input_c_p" size="small" v-model="positionEffect[1]" @change="effect_position_change"></el-input><br><br>
-              <span class='c_title'>高度(米)：{洒在建筑物上，无效}</span>
-              <el-input class="input_c_p" size="small" v-model="positionEffect[2]" @change="effect_position_change"></el-input><br><br>
+              <template v-if="selEffect==='SpreadWall'">
+                <span class='c_title'>高度(米)：</span>
+                <el-input class="input_c_p" size="small" v-model="positionEffect[2]" @change="effect_position_change"></el-input><br><br>
+              </template>
               <span class='c_title'>效果颜色：{{color}}</span>
               <el-color-picker v-model="color" show-alpha size="mini" class="color-pick-s" @active-change="change_color"></el-color-picker><br><br>
               <span class='c_title'>最大半径：{{maxRadius}} 米</span>
@@ -43,6 +45,7 @@
                 <span class='c_title'>多边形边数：{{edgeCount}} 个{0为圆形}</span>
                 <el-slider v-model="edgeCount" :min="0" :max="10" :step="1" @input="effect_edgeCount_change"></el-slider><br>
               </template>
+              <el-button @click="save" size="mini">保存当前设置</el-button>
             </div>
           </template>
         </PannelBox>
@@ -64,6 +67,7 @@ import CircleWave from '@/utils/ctrlCesium/effects/CircleWave'
 import RaderScan from '@/utils/ctrlCesium/effects/RaderScan'
 import SpreadWall from '@/utils/ctrlCesium/effects/SpreadWall'
 import { defineComponent, ref } from 'vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 declare global {
   interface Window {
     GController: any
@@ -88,6 +92,7 @@ export default defineComponent({
   components: { CesiumContainer, PannelBox },
   setup() {
     const selEffect = ref('CircleDiffusion')
+    selEffect.value = getUrlParma('selEffect') ? getUrlParma('selEffect') : selEffect.value
     const effectsList = ref([
       { value: 'CircleDiffusion', label: '圆扩散' },
       { value: 'Scanline', label: '线圈发光扩散' },
@@ -96,21 +101,21 @@ export default defineComponent({
       { value: 'CircleScan', label: '雷达圆扫' },
       { value: 'SpreadWall', label: '墙推扩散' },
     ])
-    const color = ref('rgba(19, 206, 102, 0.8)')
+    const color = ref('rgba(198, 6, 88, 0.7)')
     color.value = getUrlParma('color') ? getUrlParma('color') : color.value
     const duration = ref(3000)
-    duration.value = getUrlParma('duration', 'int') ? getUrlParma('duration', 'int') : duration.value
+    duration.value = !isNaN(getUrlParma('duration', 'int')) ? getUrlParma('duration', 'int') : duration.value
     const maxRadius = ref(1000)
-    maxRadius.value = getUrlParma('maxRadius', 'int') ? getUrlParma('maxRadius', 'int') : maxRadius.value
+    maxRadius.value = !isNaN(getUrlParma('maxRadius', 'int')) ? getUrlParma('maxRadius', 'int') : maxRadius.value
     const waveCount = ref(3)
-    waveCount.value = getUrlParma('waveCount', 'int') ? getUrlParma('waveCount', 'int') : waveCount.value
+    waveCount.value = !isNaN(getUrlParma('waveCount', 'int')) ? getUrlParma('waveCount', 'int') : waveCount.value
     const step = ref(-0.01)
-    step.value = getUrlParma('step', 'float') ? getUrlParma('step', 'float') : step.value
+    step.value = !isNaN(getUrlParma('step', 'float')) ? getUrlParma('step', 'float') : step.value
     const height = ref(500)
-    height.value = getUrlParma('height', 'int') ? getUrlParma('height', 'int') : height.value
+    height.value = !isNaN(getUrlParma('height', 'int')) ? getUrlParma('height', 'int') : height.value
     const edgeCount = ref(5)
-    edgeCount.value = getUrlParma('edgeCount', 'int') ? getUrlParma('edgeCount', 'int') : edgeCount.value
-    const positionEffect = ref([113.9303, 22.5216, 0])
+    edgeCount.value = !isNaN(getUrlParma('edgeCount', 'int')) ? getUrlParma('edgeCount', 'int') : edgeCount.value
+    const positionEffect = ref([113.9218, 22.5116, 0])
     positionEffect.value = getUrlParma('position', 'array') ? getUrlParma('position', 'array') : positionEffect.value
     let curEntityC = null
     const onReadyMap = () => {
@@ -118,13 +123,12 @@ export default defineComponent({
       const GTitleset = new Titleset(window.GController)
       GTitleset.init()
 
-      // 首先增加一个效果 然后 手动更改其 颜色
-      curEntityC = new EllipsoidFade(window.GController, 'effect-set-config')
-      curEntityC.add(positionEffect.value, color.value, maxRadius.value, duration.value)
-      curEntityC.update_position = update_position
+      effect_selEffect_change(selEffect.value)
     }
     const effect_selEffect_change = (e: any) => {
-      curEntityC.del()
+      if (curEntityC) {
+        curEntityC.del()
+      }
       let pe: any = positionEffect.value
       pe = [parseFloat(pe[0]), parseFloat(pe[1]), parseFloat(pe[2])]
       switch (e) {
@@ -197,6 +201,36 @@ export default defineComponent({
         curEntityC.change_step(val)
       }
     }
+    const save = () => {
+      ElMessageBox.confirm('提交保存当前效果配置信息, 是否继续?', '提示', {
+        confirmButtonText: '保存',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
+          // 保存现有 效果配置 调用后台
+          (window.parent as any).postMessage({
+            selEffect: selEffect.value,
+            color: color.value,
+            duration: duration.value,
+            maxRadius: maxRadius.value,
+            waveCount: waveCount.value,
+            step: step.value,
+            height: height.value,
+            edgeCount: edgeCount.value,
+            positionx: positionEffect.value[0],
+            positiony: positionEffect.value[1],
+            positionz: positionEffect.value[2]
+          }, '*')
+          ElMessage({
+            type: 'success',
+            message: '保存成功!',
+          })
+        })
+        .catch((e:any ) => {
+          console.log(e)
+        })
+    }
     return {
       onReadyMap,
       selEffect,
@@ -217,7 +251,8 @@ export default defineComponent({
       height,
       effect_height_change,
       edgeCount,
-      effect_edgeCount_change
+      effect_edgeCount_change,
+      save
     }
   },
 })
