@@ -13,3 +13,17 @@ export function getUrlKey(name: string, url: string) {
     ) || null
   )
 }
+export function getUrlParma(p: string, type = 'string'): any {
+  let UrlParma:any = getUrlKey(p, window.location.href)
+  if (type === 'int') {
+    return parseInt(UrlParma)
+  }
+  if (type === 'float') {
+    return parseFloat(UrlParma)
+  }
+  if (UrlParma && type === 'array') {
+    UrlParma = UrlParma.split(',')
+    return [parseFloat(UrlParma[0]), parseFloat(UrlParma[1]), parseFloat(UrlParma[2])]
+  }
+  return UrlParma
+}

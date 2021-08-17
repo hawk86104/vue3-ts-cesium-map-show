@@ -50,6 +50,10 @@ class Titleset {
       this.update3dtilesMaxtrix(OneModal, ele)
     }
   }
+  showConfigCom(ele: any) {
+    this.curEleDatas = ele
+    this.addOne3dTitleset(ele[0], 0, true)
+  }
   async showOne(id: string): Promise<any> {
     const res: any = await getOneTitleset(id)
     this.curEleDatas = res.data
