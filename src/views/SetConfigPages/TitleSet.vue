@@ -33,7 +33,7 @@ import CesiumContainer from '@/components/CesiumContainer.vue'
 import PannelBox from '@/components/PannelBox.vue'
 import { defineComponent, ref } from 'vue'
 import Titleset from '@/utils/ctrlCesium/Titleset'
-import { getUrlKey } from '@/utils/common'
+import { getUrlParma } from '@/utils/common'
 import { ElMessageBox, ElMessage } from 'element-plus'
 declare global {
     interface Window { GController: any; }
@@ -89,17 +89,30 @@ export default defineComponent({
     const effectswitch_change = (val: boolean) => {
       GTitleset.effectswitch_change(val)
     }
-    const onReadyMap = async () => {
-      const titleSetId = getUrlKey('id', window.location.href)
-      GTitleset = new Titleset(window.GController)
-      const reData = await GTitleset.showOne(titleSetId)
+    const onReadyMap = () => {
+      let reData:any = {
+        flytoswitch: 1
+      }
+      let url = getUrlParma('url')
+      url = decodeURI(url)
+      reData.url = url
+      reData.offset_x = getUrlParma('offset_x', 'float')
       offSet_lon.value = reData.offset_x * 10000
+      reData.offset_y = getUrlParma('offset_y', 'float')
       offSet_lat.value = reData.offset_y * 10000
+      reData.offset_z = getUrlParma('offset_z', 'int')
       offSet_height.value = reData.offset_z
+      reData.color = getUrlParma('color')
       color.value = reData.color
+      reData.effect_color = getUrlParma('effect_color')
       effect_color.value = reData.effect_color
+      reData.effectswitch = getUrlParma('effectswitch', 'int')
       effectswitch.value = reData.effectswitch === 1
+      reData.height = getUrlParma('height', 'int')
       effect_height.value = reData.height
+
+      GTitleset = new Titleset(window.GController)
+      GTitleset.showConfigCom([reData])
     }
     const formatTooltip = (val: number) => {
       return val / 10000

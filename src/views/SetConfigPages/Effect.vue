@@ -57,7 +57,7 @@
 /* eslint-disable no-debugger */
 import CesiumContainer from '@/components/CesiumContainer.vue'
 import PannelBox from '@/components/PannelBox.vue'
-import { getUrlKey } from '@/utils/common'
+import { getUrlParma } from '@/utils/common'
 
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import EllipsoidFade from '@/utils/ctrlCesium/effects/EllipsoidFade'
@@ -73,20 +73,7 @@ declare global {
     GController: any
   }
 }
-const getUrlParma = (p: string, type = 'string'): any => {
-  let UrlParma:any = getUrlKey(p, window.location.href)
-  if (type === 'int') {
-    return parseInt(UrlParma)
-  }
-  if (type === 'float') {
-    return parseFloat(UrlParma)
-  }
-  if (UrlParma && type === 'array') {
-    UrlParma = UrlParma.split(',')
-    return [parseFloat(UrlParma[0]), parseFloat(UrlParma[1]), parseFloat(UrlParma[2])]
-  }
-  return UrlParma
-}
+
 export default defineComponent({
   name: 'EffectCongfig',
   components: { CesiumContainer, PannelBox },
