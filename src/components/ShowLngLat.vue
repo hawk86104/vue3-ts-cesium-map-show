@@ -1,3 +1,11 @@
+<!--
+ * @Description: 
+ * @Version: 1.668
+ * @Autor: Hawk
+ * @Date: 2021-06-29 09:01:28
+ * @LastEditors: Hawk
+ * @LastEditTime: 2021-08-18 10:48:16
+-->
 <template>
   <div class="ShowLngLatContainer">
     <span>lng:{{ lng }}</span> <span>lat:{{ lat }}</span>
@@ -5,7 +13,7 @@
 </template>
 
 <script lang="ts">
-
+declare const Cesium: any
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
@@ -38,7 +46,7 @@ export default defineComponent({
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
     }
     return {
-      lng, lat, initCesiumHandler /* height*/
+      lng, lat, initCesiumHandler /* height */
     }
   }
 })

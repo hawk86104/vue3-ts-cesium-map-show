@@ -1,3 +1,11 @@
+<!--
+ * @Description: 
+ * @Version: 1.668
+ * @Autor: Hawk
+ * @Date: 2021-06-17 15:13:58
+ * @LastEditors: Hawk
+ * @LastEditTime: 2021-08-18 08:58:25
+-->
 <template>
   <div class="Cesium3DIndex" id="cesiumContainer"></div>
   <ShowLngLat ref="ShowLngLatRef" />
@@ -10,10 +18,6 @@ import { getBaseMapConfig, getBaseMapImageryList } from '@/utils/getFormatData/B
 import ShowLngLat from '@/components/ShowLngLat.vue' // @ is an alias to /src
 import ButtonTools from '@/components/ButtonTools.vue'
 
-declare global {
-    interface Window { GController: any; }
-}
-// 
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import EllipsoidFade from '@/utils/ctrlCesium/effects/EllipsoidFade'
 import RaderScan from '@/utils/ctrlCesium/effects/RaderScan'
@@ -34,7 +38,7 @@ export default defineComponent({
 
     const initMap = (BaseMapConfig:any, MapImageryList:any) => {
       viewer = GController.init(BaseMapConfig, MapImageryList)
-      window.GController = viewer // 全局控制台 调试viewer
+      window.Gviewer = viewer // 全局控制台 调试viewer
       // 显示经纬度绑定事件
       ShowLngLatRef.value.initCesiumHandler(viewer)
       // 飞到配置的坐标

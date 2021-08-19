@@ -35,10 +35,7 @@ import { defineComponent, ref } from 'vue'
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import { getUrlParma } from '@/utils/common'
 import { ElMessageBox, ElMessage } from 'element-plus'
-declare global {
-    interface Window { GController: any; }
-}
-// declare const $: any
+
 export default defineComponent({
   name: 'TitleSetCongfig',
   components: { CesiumContainer, PannelBox },
@@ -111,7 +108,7 @@ export default defineComponent({
       reData.height = getUrlParma('height', 'int')
       effect_height.value = reData.height
 
-      GTitleset = new Titleset(window.GController)
+      GTitleset = new Titleset(window.Gviewer)
       GTitleset.showConfigCom([reData])
     }
     const formatTooltip = (val: number) => {
