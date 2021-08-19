@@ -68,11 +68,6 @@ import RaderScan from '@/utils/ctrlCesium/effects/RaderScan'
 import SpreadWall from '@/utils/ctrlCesium/effects/SpreadWall'
 import { defineComponent, ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
-declare global {
-  interface Window {
-    GController: any
-  }
-}
 
 export default defineComponent({
   name: 'EffectCongfig',
@@ -107,7 +102,7 @@ export default defineComponent({
     let curEntityC = null
     const onReadyMap = () => {
       // 载入默认白膜
-      const GTitleset = new Titleset(window.GController)
+      const GTitleset = new Titleset(window.Gviewer)
       GTitleset.init()
 
       effect_selEffect_change(selEffect.value)
@@ -120,27 +115,27 @@ export default defineComponent({
       pe = [parseFloat(pe[0]), parseFloat(pe[1]), parseFloat(pe[2])]
       switch (e) {
         case 'CircleDiffusion':
-          curEntityC = new EllipsoidFade(window.GController, 'effect-set-config' + e)
+          curEntityC = new EllipsoidFade(window.Gviewer, 'effect-set-config' + e)
           curEntityC.add(pe, color.value, maxRadius.value, duration.value)
           break
         case 'Scanline':
-          curEntityC = new Scanline(window.GController, 'effect-set-config' + e)
+          curEntityC = new Scanline(window.Gviewer, 'effect-set-config' + e)
           curEntityC.add(pe, color.value, maxRadius.value, duration.value)
           break
         case 'CircleWave':
-          curEntityC = new CircleWave(window.GController, 'effect-set-config' + e)
+          curEntityC = new CircleWave(window.Gviewer, 'effect-set-config' + e)
           curEntityC.add(pe, color.value, maxRadius.value, duration.value, waveCount.value)
           break
         case 'HexagonSpread':
-          curEntityC = new HexagonSpread(window.GController, 'effect-set-config' + e)
+          curEntityC = new HexagonSpread(window.Gviewer, 'effect-set-config' + e)
           curEntityC.add(pe, color.value, maxRadius.value, duration.value)
           break
         case 'CircleScan':
-          curEntityC = new RaderScan(window.GController, 'effect-set-config' + e)
+          curEntityC = new RaderScan(window.Gviewer, 'effect-set-config' + e)
           curEntityC.add(pe, color.value, maxRadius.value, step.value)
           break
         case 'SpreadWall':
-          curEntityC = new SpreadWall(window.GController, 'effect-set-config' + e)
+          curEntityC = new SpreadWall(window.Gviewer, 'effect-set-config' + e)
           curEntityC.add(pe, color.value, maxRadius.value, duration.value, height.value, edgeCount.value)
           break
         default:
@@ -154,37 +149,37 @@ export default defineComponent({
       curEntityC.change_position(positionEffect.value)
     }
     const effect_height_change = (val: number) => {
-      if (curEntityC && window.GController.entities) {
+      if (curEntityC && window.Gviewer.entities) {
         curEntityC.change_height(val)
       }
     }
     const effect_edgeCount_change = (val: number) => {
-      if (curEntityC && window.GController.entities) {
+      if (curEntityC && window.Gviewer.entities) {
         curEntityC.edgeCount = val
       }
     }
     const change_color = (val: string) => {
-      if (curEntityC && window.GController.entities) {
+      if (curEntityC && window.Gviewer.entities) {
         curEntityC.change_color(val)
       }
     }
     const effect_duration_change = (val: number) => {
-      if (curEntityC && window.GController.entities) {
+      if (curEntityC && window.Gviewer.entities) {
         curEntityC.change_duration(val)
       }
     }
     const effect_maxRadius_change = (val: number) => {
-      if (curEntityC && window.GController.entities) {
+      if (curEntityC && window.Gviewer.entities) {
         curEntityC.maxRadius = val
       }
     }
     const effect_waveCount_change = (val: number) => {
-      if (curEntityC && window.GController.entities) {
+      if (curEntityC && window.Gviewer.entities) {
         curEntityC.change_waveCount(val)
       }
     }
     const effect_step_change = (val: number) => {
-      if (curEntityC && window.GController.entities) {
+      if (curEntityC && window.Gviewer.entities) {
         curEntityC.change_step(val)
       }
     }
@@ -265,9 +260,6 @@ export default defineComponent({
     .c_title{
       color: white;
       font-size: 0.8em;
-    }
-    .input_c_p{
-      // width: 16em;
     }
   }
 }

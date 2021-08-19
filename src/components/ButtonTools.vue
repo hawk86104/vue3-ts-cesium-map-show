@@ -7,11 +7,8 @@
 </template>
 
 <script lang="ts">
+declare const Cesium: any
 /* eslint-disable no-debugger */
-declare global {
-  interface Window { GController: any; }
-}
-
 import { defineComponent, onBeforeMount, ref } from 'vue'
 import { getMapView, setMapView } from '@/api/base'
 import { zipObject, map} from 'lodash'
@@ -24,12 +21,12 @@ export default defineComponent({
     const IsShow = ref<boolean>(false)
     const FirstMapView = ref<any>()
     const save = () => {
-      const camera:any = window.GController.scene.camera
+      const camera:any = window.Gviewer.scene.camera
       const direction:any = camera.direction
       const up:any = camera.up
       const position:any = camera.position
 
-      const ellipsoid = window.GController.scene.globe.ellipsoid
+      const ellipsoid = window.Gviewer.scene.globe.ellipsoid
       const cartesian3 = new Cesium.Cartesian3(position.x, position.y, position.z)
       const cartographic = ellipsoid.cartesianToCartographic(cartesian3)
       const lat = Cesium.Math.toDegrees(cartographic.latitude)
@@ -65,7 +62,7 @@ export default defineComponent({
       // const z = 2420140.372624237
 
       // // 这里是世界坐标 xyz 转 经纬度数
-      // const ellipsoid = window.GController.scene.globe.ellipsoid
+      // const ellipsoid = window.Gviewer.scene.globe.ellipsoid
       // const cartesian3 = new Cesium.Cartesian3(x, y, z)
       // const cartographic = ellipsoid.cartesianToCartographic(cartesian3)
       // const lat = Cesium.Math.toDegrees(cartographic.latitude)
@@ -83,12 +80,12 @@ export default defineComponent({
       }
 
       // 这里是 经纬度 转 世界坐标xyz
-      const ellipsoidz = window.GController.scene.globe.ellipsoid
+      const ellipsoidz = window.Gviewer.scene.globe.ellipsoid
       const cartographicz = Cesium.Cartographic.fromDegrees(
         parseFloat(FirstMapView.value.lng), parseFloat(FirstMapView.value.lat), parseFloat(FirstMapView.value.height))
       const cartesianXYZ = ellipsoidz.cartographicToCartesian(cartographicz)
 
-      window.GController.scene.camera.flyTo({
+      window.Gviewer.scene.camera.flyTo({
         // setView
         destination: {
           x: cartesianXYZ.x,
