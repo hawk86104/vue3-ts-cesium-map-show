@@ -49,7 +49,7 @@ export default defineComponent({
     const effect_height = ref(100)
     let GTitleset = null
     const save = () => {
-      ElMessageBox.confirm('提交保存当前图层的配置信息, 是否继续?', '提示', {
+      ElMessageBox.confirm('提交保存当前白膜的配置信息, 是否继续?', '提示', {
         confirmButtonText: '保存',
         cancelButtonText: '取消',
         type: 'warning',
