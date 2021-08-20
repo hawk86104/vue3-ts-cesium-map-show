@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-08-18 08:54:00
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-19 09:42:24
+ * @LastEditTime: 2021-08-20 16:02:06
 -->
 <template>
   <CesiumContainer
@@ -60,6 +60,7 @@
               <span class="c_title">是否反色：</span><el-switch v-model="invertColor" @change="change_interfaceConfig('invertColor')"></el-switch><br>
               <span class='c_title'>滤镜颜色：{{color}}</span>
               <el-color-picker v-model="color" color-format="rgb" size="mini" class="color-pick-s" @active-change="change_interfaceConfig('color', $event)"></el-color-picker><br><br>
+              <el-button @click="save">保存当前配置</el-button>
             </div>
           </template>
         </PannelBox>
@@ -73,40 +74,91 @@
 import CesiumContainer from '@/components/CesiumContainer.vue'
 import PannelBox from '@/components/PannelBox.vue'
 import { defineComponent, ref, onMounted } from 'vue'
-// import { string_to_name } from '@/utils/common'
+import { getUrlParma } from '@/utils/common'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import { colorRGB2Hex } from '@/utils/color'
 declare const Cesium: any
 export default defineComponent({
   name: 'ImageryCongfig',
   components: { CesiumContainer, PannelBox },
   setup() {
-    const saturation = ref(0)
-    const brightness = ref(0.6)
-    const contrast = ref(1.8)
-    const hue = ref(1)
-    const gamma = ref(0.3)
+    const saturation = ref(1.0)
+    const brightness = ref(1.0)
+    const contrast = ref(1.0)
+    const hue = ref(0.0)
+    const gamma = ref(1.0)
     const invertColor = ref(true)
-    const color = ref('rgb(78,112,166)')
+    const color = ref('rgb(255,255,255)') // rgb(78,112,166)
     const CesiumContainerRef = ref()
+    const save = () => {
+      ElMessageBox.confirm('提交保存当前图层的配置信息, 是否继续?', '提示', {
+        confirmButtonText: '保存',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
+          (window.parent as any).postMessage({
+            color: colorRGB2Hex(color.value),
+            invertColor: invertColor.value,
+            interfaceConfig: {
+              saturation: saturation.value,
+              brightness: brightness.value,
+              contrast: contrast.value,
+              hue: hue.value,
+              gamma: gamma.value,
+            }
+          }, '*')
+          ElMessage({
+            type: 'success',
+            message: '保存成功!',
+          })
+        })
+        .catch((e:any ) => {
+          console.log(e)
+        })
+    }
     onMounted(() => {
-      CesiumContainerRef.value.initImageryMap([
-        {
-          type: 'UrlTemplateImageryProvider',
-          classConfig: {
-            url: 'http://webst03.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&style=7',
-          },
-          interfaceConfig: {
-            saturation: 0,
-            brightness: 0.6,
-            contrast: 1.8,
-            hue: 1,
-            gamma: 0.3,
-          },
-          offset: '0,0',
-          invertswitch: 1,
-          filterRGB: '#4e70a6',
-          showswitch: 1,
-        },
-      ])
+      let urlArr = getUrlParma('urlArr')
+      urlArr = decodeURI(urlArr)
+      urlArr = JSON.parse(urlArr)
+      let interfaceConfig = getUrlParma('interfaceConfig')
+      interfaceConfig = JSON.parse(decodeURI(interfaceConfig))
+      if (interfaceConfig) {
+        if (interfaceConfig.saturation || interfaceConfig.saturation === 0) {
+          saturation.value = interfaceConfig.saturation
+        }
+        if (interfaceConfig.brightness || interfaceConfig.brightness === 0) {
+          brightness.value = interfaceConfig.brightness
+        }
+        if (interfaceConfig.contrast || interfaceConfig.contrast === 0) {
+          contrast.value = interfaceConfig.contrast
+        }
+        
+        if (interfaceConfig.hue || interfaceConfig.hue === 0) {
+          hue.value = interfaceConfig.hue
+        }
+        if (interfaceConfig.gamma || interfaceConfig.gamma === 0) {
+          gamma.value = interfaceConfig.gamma
+        }
+      }
+      let inColorBool = getUrlParma('invertColor', 'int')
+      if (!isNaN(inColorBool)) {
+        invertColor.value = inColorBool === 1
+      }
+      let colorP = getUrlParma('color')
+      if (!isNaN(colorP) || colorP) {
+        color.value = colorP
+      }
+      let type = getUrlParma('type')
+      let defaultParams = {
+        type: type,
+        classConfig: urlArr,
+        interfaceConfig: interfaceConfig,
+        invertswitch: inColorBool,
+        offset: '0,0',
+        filterRGB: colorP,
+      }
+      CesiumContainerRef.value.initImageryMap([defaultParams])
     })
     const change_interfaceConfig = (type: string, color = '') => {
       const baseLayer = window.Gviewer.imageryLayers.get(0)
@@ -128,10 +180,7 @@ export default defineComponent({
             baseLayer[type] = gamma.value
             break
           case 'invertColor':
-            baseLayer[type] = invertColor.value
-            window.Gviewer.scene.requestRenderMode = true
-            window.Gviewer.scence.requestRender()
-            window.Gviewer.scene.forceRender()
+            baseLayer[type] = invertColor.value ? 1 : 0
             break
           case 'color':
             if (color) {
@@ -153,7 +202,7 @@ export default defineComponent({
       onReadyMap,
       CesiumContainerRef,
       saturation,
-      change_interfaceConfig, brightness, contrast, hue, gamma, invertColor, color
+      change_interfaceConfig, brightness, contrast, hue, gamma, invertColor, color, save
     }
   },
 })
