@@ -1,8 +1,17 @@
+/*
+ * @Description: 
+ * @Version: 1.668
+ * @Autor: Hawk
+ * @Date: 2021-06-21 16:18:28
+ * @LastEditors: Hawk
+ * @LastEditTime: 2021-08-23 15:51:09
+ */
 module.exports = {
   indexPath: '../../../../../addons/cesiummapv/view/index/vue3.html', // bulid发布后，首页html位置
-  // publicPath: '/assets/addons/cesiummapv/vue3/', // 基本路径 http://map.217dan.com/assets/addons/cesiummapv/vue3/
+  publicPath: '/assets/addons/cesiummapv/vue3/', // 基本路径 http://map.217dan.com/assets/addons/cesiummapv/vue3/
   // outputDir: '../../../public/assets/addons/cesiummapv/vue3', // bulid发布后，资源的导出目录
   // assetsDir: '../../../../assets/addons/cesiummapv/vue3/',		// 静态资源目录 ../../../../assets/addons/cesiummapv/vue3/
+  // assetsDir: './assets/addons/cesiummapv/vue3/',
   devServer: {
     proxy: {
       '/api': {

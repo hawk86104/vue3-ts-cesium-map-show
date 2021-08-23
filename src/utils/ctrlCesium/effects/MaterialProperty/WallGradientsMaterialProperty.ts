@@ -1,3 +1,11 @@
+/*
+ * @Description: 
+ * @Version: 1.668
+ * @Autor: Hawk
+ * @Date: 2021-07-27 15:58:41
+ * @LastEditors: Hawk
+ * @LastEditTime: 2021-08-23 16:05:59
+ */
 /* eslint-disable no-debugger */
 // 墙推动扩散效果
 
@@ -52,7 +60,7 @@ WallGradientsMaterialProperty.prototype.equals = function(other: Other_tmp) {
 }
 Cesium.WallGradientsMaterialProperty = WallGradientsMaterialProperty
 Cesium.Material.WallGradientsType = 'WallGradients'
-Cesium.Material.WallGradientsImage = './effect/wallgradients.png'
+Cesium.Material.WallGradientsImage = process.env.VUE_APP_API_ASSETS + 'effect/wallgradients.png'
 Cesium.Material.WallGradientsSource = `
 czm_material czm_getMaterial(czm_materialInput materialInput)
 {
