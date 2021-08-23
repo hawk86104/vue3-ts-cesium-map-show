@@ -1,3 +1,11 @@
+/*
+ * @Description: 
+ * @Version: 1.668
+ * @Autor: Hawk
+ * @Date: 2021-07-28 15:54:28
+ * @LastEditors: Hawk
+ * @LastEditTime: 2021-08-23 15:03:10
+ */
 /* eslint-disable no-debugger */
 import Effect from './Effect'
 import { init } from './MaterialProperty/ScanlineMaterialProperty'
@@ -12,9 +20,9 @@ class Scanline extends Effect {
     const curEntity = this.viewer.entities.getById(this.id)
     curEntity._ellipse._material.speed = d
   }
-  add(position: any, color: string, maxRadius: number, speed: number) {
+  add(position: any, color: string, maxRadius: number, speed: number, isedit = false) {
     init()
-    super.add(position, color, maxRadius, speed)
+    super.add(position, color, maxRadius, speed, isedit)
     const _this = this
     this.viewer.entities.add({
       id: _this.id,

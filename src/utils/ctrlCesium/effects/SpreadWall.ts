@@ -56,7 +56,8 @@ class SpreadWall {
     maxRadius: number,
     duration: number,
     wallHeight: number,
-    edgeCount = 0
+    edgeCount = 0,
+    isedit = false
   ) {
     init()
     position = Cesium.Cartographic.fromDegrees(
@@ -78,7 +79,9 @@ class SpreadWall {
     const _this = this
 
     // 这里处理鼠标 事件
-    this.mouseEvent()
+    if (isedit) {
+      this.mouseEvent()
+    }
     this.viewer.entities.add({
       id: _this.id,
       wall: {

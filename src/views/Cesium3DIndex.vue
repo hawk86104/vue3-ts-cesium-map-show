@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-06-17 15:13:58
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-18 08:58:25
+ * @LastEditTime: 2021-08-23 14:09:09
 -->
 <template>
   <div class="Cesium3DIndex" id="cesiumContainer"></div>
@@ -17,14 +17,8 @@ import { GController } from '@/utils/ctrlCesium/Controller'
 import { getBaseMapConfig, getBaseMapImageryList } from '@/utils/getFormatData/BaseMap'
 import ShowLngLat from '@/components/ShowLngLat.vue' // @ is an alias to /src
 import ButtonTools from '@/components/ButtonTools.vue'
-
 import Titleset from '@/utils/ctrlCesium/Titleset'
-import EllipsoidFade from '@/utils/ctrlCesium/effects/EllipsoidFade'
-import RaderScan from '@/utils/ctrlCesium/effects/RaderScan'
-import CircleWave from '@/utils/ctrlCesium/effects/CircleWave'
-import HexagonSpread from '@/utils/ctrlCesium/effects/HexagonSpread'
-import SpreadWall from '@/utils/ctrlCesium/effects/SpreadWall'
-import Scanline from '@/utils/ctrlCesium/effects/Scanline'
+import Manager from '@/utils/ctrlCesium/effects/Manager'
 // import Spriteline from '@/utils/ctrlCesium/effects/Spriteline'
 import { defineComponent, onBeforeMount, nextTick, ref } from 'vue'
 
@@ -48,30 +42,9 @@ export default defineComponent({
       const GTitleset = new Titleset(viewer)
       GTitleset.init()
 
-      // 点扩散
-      const GEllipsoidFade = new EllipsoidFade(viewer, 'effect-01')
-      GEllipsoidFade.add([113.9303 - 0.02, 22.5216, 8], 'rgba(0,255,0,0.8)', 1000, 3000)
-
-      // RaderScan 雷达扫描
-      const GRaderScan = new RaderScan(viewer, 'effect-05')
-      GRaderScan.add([113.9303 - 0.01, 22.5216, 0], 'rgba(0,255,0,1)', 1000, -0.02)
-
-      // 圈波纹
-      const GCircleWave = new CircleWave(viewer, 'effect-04')
-      GCircleWave.add([113.9303 + 0.015, 22.5216 + 0.01, 58], 'rgba(0,255,255,1)', 1000, 3000)
-
-      // 六边形
-      const GHexagonSpread = new HexagonSpread(viewer, 'effect-02')
-      GHexagonSpread.add([113.9303 + 0.015, 22.5216, 58], 'rgba(255,255,0,1)', 500, 3000)
-
-      // 扩散墙
-      const GSpreadWall = new SpreadWall(viewer, 'effect-06')
-      GSpreadWall.add([113.9303 + 0.005, 22.5216 - 0.015, 0], 'rgba(255,0,255,0.5)', 5000, 100, 300)
-      GSpreadWall.add([113.9303 - 0.005, 22.5216 - 0.015, 0], 'rgba(18,255,188,0.8)', 1000, 200, 500, 8) // 最后是墙高 和 多边形
-
-      // 线圈扩散效果
-      const GScanline = new Scanline(viewer, 'effect-03')
-      GScanline.add([113.9303 - 0.01, 22.5216 - 0.020, 0], 'rgba(251,16,55,0.8)', 5000, 3000)
+      // 处理 配置好的点效果列表
+      const GManager = new Manager(viewer)
+      GManager.init()
 
       // 精灵路
       // const GSpriteline = new Spriteline(viewer)

@@ -1,3 +1,11 @@
+/*
+ * @Description: 
+ * @Version: 1.668
+ * @Autor: Hawk
+ * @Date: 2021-07-26 18:23:10
+ * @LastEditors: Hawk
+ * @LastEditTime: 2021-08-23 15:02:45
+ */
 import Effect from './Effect'
 import { init } from './MaterialProperty/HexagonSpreadMaterialProperty'
 
@@ -6,9 +14,9 @@ class HexagonSpread extends Effect {
   constructor(viewer: any, id: string) {
     super(viewer, id)
   }
-  add(position: any, color: string, maxRadius: number, duration: number) {
+  add(position: any, color: string, maxRadius: number, duration: number, isedit = false) {
     init()
-    super.add(position, color, maxRadius, duration)
+    super.add(position, color, maxRadius, duration, isedit)
     const _this = this
     let currentRadius = 1
     this.viewer.entities.add({

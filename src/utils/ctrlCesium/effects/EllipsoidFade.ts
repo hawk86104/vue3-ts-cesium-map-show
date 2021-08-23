@@ -6,9 +6,9 @@ class EllipsoidFade extends Effect {
   constructor(viewer: any, id: string) {
     super(viewer, id)
   }
-  add(position: any, color: string, maxRadius: number, duration: number) {
+  add(position: any, color: string, maxRadius: number, duration: number, isedit = false) {
     efmInit()
-    super.add(position, color, maxRadius, duration)
+    super.add(position, color, maxRadius, duration, isedit)
     const _this = this
     let currentRadius = 1
     const entity = this.viewer.entities.add({
