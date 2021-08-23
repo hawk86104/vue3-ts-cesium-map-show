@@ -1,3 +1,11 @@
+/*
+ * @Description: 
+ * @Version: 1.668
+ * @Autor: Hawk
+ * @Date: 2021-07-26 16:43:50
+ * @LastEditors: Hawk
+ * @LastEditTime: 2021-08-23 16:06:47
+ */
 // HexagonSpreadMaterialProperty
 /* eslint-disable no-debugger */
 // 六边形扩散效果
@@ -55,7 +63,7 @@ HexagonSpreadMaterialProperty.prototype.equals = function(other: Other_tmp) {
 }
 Cesium.HexagonSpreadMaterialProperty = HexagonSpreadMaterialProperty
 Cesium.Material.HexagonSpreadMaterialType = 'HexagonSpreadMaterial'
-Cesium.Material.HexagonSpreadMaterialImage = './effect/hexagon.png'
+Cesium.Material.HexagonSpreadMaterialImage = process.env.VUE_APP_API_ASSETS + '/effect/hexagon.png'
 Cesium.Material.HexagonSpreadSource = `
 czm_material czm_getMaterial(czm_materialInput materialInput)
 {
