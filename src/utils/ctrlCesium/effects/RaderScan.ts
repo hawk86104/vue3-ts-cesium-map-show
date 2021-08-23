@@ -16,8 +16,8 @@ class RaderScan extends Effect {
   change_color(val: string) {
     this.scanColor = val
   }
-  add(position: any, scanColor: string, maxRadius: number, step: number) {
-    super.add(position, scanColor, maxRadius, step)
+  add(position: any, scanColor: string, maxRadius: number, step: number, isedit = false) {
+    super.add(position, scanColor, maxRadius, step, isedit)
     this.step = step
     this.scanColor = scanColor
     const _this = this

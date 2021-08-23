@@ -116,27 +116,27 @@ export default defineComponent({
       switch (e) {
         case 'CircleDiffusion':
           curEntityC = new EllipsoidFade(window.Gviewer, 'effect-set-config' + e)
-          curEntityC.add(pe, color.value, maxRadius.value, duration.value)
+          curEntityC.add(pe, color.value, maxRadius.value, duration.value, true)
           break
         case 'Scanline':
           curEntityC = new Scanline(window.Gviewer, 'effect-set-config' + e)
-          curEntityC.add(pe, color.value, maxRadius.value, duration.value)
+          curEntityC.add(pe, color.value, maxRadius.value, duration.value, true)
           break
         case 'CircleWave':
           curEntityC = new CircleWave(window.Gviewer, 'effect-set-config' + e)
-          curEntityC.add(pe, color.value, maxRadius.value, duration.value, waveCount.value)
+          curEntityC.add(pe, color.value, maxRadius.value, duration.value, true, waveCount.value)
           break
         case 'HexagonSpread':
           curEntityC = new HexagonSpread(window.Gviewer, 'effect-set-config' + e)
-          curEntityC.add(pe, color.value, maxRadius.value, duration.value)
+          curEntityC.add(pe, color.value, maxRadius.value, duration.value, true)
           break
         case 'CircleScan':
           curEntityC = new RaderScan(window.Gviewer, 'effect-set-config' + e)
-          curEntityC.add(pe, color.value, maxRadius.value, step.value)
+          curEntityC.add(pe, color.value, maxRadius.value, step.value, true)
           break
         case 'SpreadWall':
           curEntityC = new SpreadWall(window.Gviewer, 'effect-set-config' + e)
-          curEntityC.add(pe, color.value, maxRadius.value, duration.value, height.value, edgeCount.value)
+          curEntityC.add(pe, color.value, maxRadius.value, duration.value, height.value, edgeCount.value, true)
           break
         default:
       }

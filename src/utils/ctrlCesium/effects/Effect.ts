@@ -1,3 +1,11 @@
+/*
+ * @Description:
+ * @Version: 1.668
+ * @Autor: Hawk
+ * @Date: 2021-08-10 10:52:31
+ * @LastEditors: Hawk
+ * @LastEditTime: 2021-08-23 15:04:15
+ */
 /* eslint-disable no-debugger */
 
 // 点效果集合 父类
@@ -38,8 +46,19 @@ class Effect {
   del() {
     this.viewer.entities.removeById(this.id)
   }
-  add(position: any, color: string, maxRadius: number, duration: number) {
+  add(
+    position: any,
+    color: string,
+    maxRadius: number,
+    duration: number,
+    isEdit = false
+  ) {
     const _this = this
+    this.duration = duration
+    this.maxRadius = maxRadius
+    if (!isEdit) {
+      return
+    }
     function leftDownAction(e: any) {
       _this.pointDraged = _this.viewer.scene.pick(e.position) // 选取当前的entity
       if (
@@ -89,8 +108,6 @@ class Effect {
       mouseMoveAction,
       Cesium.ScreenSpaceEventType.MOUSE_MOVE
     )
-    this.duration = duration
-    this.maxRadius = maxRadius
   }
 }
 export default Effect
