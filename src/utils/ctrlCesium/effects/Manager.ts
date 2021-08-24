@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-08-23 13:39:41
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-23 15:03:52
+ * @LastEditTime: 2021-08-24 14:15:36
  */
 /* eslint-disable no-debugger */
 import { getPointsEffectList } from '@/api/effect'
@@ -58,7 +58,7 @@ class Manager {
           'effect-set-config' + ele.effect_type
         )
         ext = JSON.parse(ele.ext)
-        curEntityC.add(pe, ele.color, ele.radius, ele.duration, ext.waveCount)
+        curEntityC.add(pe, ele.color, ele.radius, ele.duration, false, ext.waveCount)
         break
       case 'HexagonSpread':
         curEntityC = new HexagonSpread(

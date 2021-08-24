@@ -159,6 +159,10 @@ export default defineComponent({
       }
     }
     const change_color = (val: string) => {
+      if (!val) {
+        val = 'rgba(255,255,255,1)'
+        color.value = val
+      }
       if (curEntityC && window.Gviewer.entities) {
         curEntityC.change_color(val)
       }
