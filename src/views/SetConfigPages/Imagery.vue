@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-08-18 08:54:00
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-20 16:02:06
+ * @LastEditTime: 2021-08-24 14:30:28
 -->
 <template>
   <CesiumContainer
@@ -160,8 +160,9 @@ export default defineComponent({
       }
       CesiumContainerRef.value.initImageryMap([defaultParams])
     })
-    const change_interfaceConfig = (type: string, color = '') => {
+    const change_interfaceConfig = (type: string, Tcolor = '') => {
       const baseLayer = window.Gviewer.imageryLayers.get(0)
+      let tmpColor: any = null
       try {
         switch (type) {
           case 'saturation':
@@ -183,10 +184,12 @@ export default defineComponent({
             baseLayer[type] = invertColor.value ? 1 : 0
             break
           case 'color':
-            if (color) {
-              const tmpColor = (new Cesium.Color.fromCssColorString(color)).toBytes()
-              baseLayer.filterRGB = [tmpColor[0], tmpColor[1], tmpColor[2]]
+            if (!Tcolor) {
+              Tcolor = 'rgba(255,255,255,0)'
+              color.value = Tcolor
             }
+            tmpColor = (new Cesium.Color.fromCssColorString(Tcolor)).toBytes()
+            baseLayer.filterRGB = [tmpColor[0], tmpColor[1], tmpColor[2]]
             break
           default:
         }

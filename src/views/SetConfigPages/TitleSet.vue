@@ -78,9 +78,14 @@ export default defineComponent({
         GTitleset.effect_height_change(val)
       }
     }
-    const effect_color_change = (color: string) => {
+    const effect_color_change = (val: string) => {
+      debugger
+      if (!val) {
+        val = 'rgb(255,255,255)'
+        effect_color.value = val
+      }
       if (GTitleset) {
-        GTitleset.effect_color_change(color)
+        GTitleset.effect_color_change(val)
       }
     }
     const effectswitch_change = (val: boolean) => {
@@ -115,6 +120,10 @@ export default defineComponent({
       return val / 10000
     }
     const change_color = (val: string) => {
+      if (!val) {
+        val = 'rgba(255,255,255,1)'
+        color.value = val
+      }
       if (GTitleset) {
         GTitleset.change_color(val)
       }
