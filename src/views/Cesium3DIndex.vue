@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-06-17 15:13:58
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-23 14:09:09
+ * @LastEditTime: 2021-08-26 15:14:14
 -->
 <template>
   <div class="Cesium3DIndex" id="cesiumContainer"></div>
@@ -19,7 +19,7 @@ import ShowLngLat from '@/components/ShowLngLat.vue' // @ is an alias to /src
 import ButtonTools from '@/components/ButtonTools.vue'
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import Manager from '@/utils/ctrlCesium/effects/Manager'
-// import Spriteline from '@/utils/ctrlCesium/effects/Spriteline'
+import RoadNetwork from '@/utils/ctrlCesium/lines/RoadNetwork'
 import { defineComponent, onBeforeMount, nextTick, ref } from 'vue'
 
 export default defineComponent({
@@ -43,12 +43,18 @@ export default defineComponent({
       GTitleset.init()
 
       // 处理 配置好的点效果列表
-      const GManager = new Manager(viewer)
-      GManager.init()
+      // const GManager = new Manager(viewer)
+      // GManager.init()
 
+      // 公路效果
+      const GRoadNetwork = new RoadNetwork(viewer, 'road')
+      // bus路网
+      // GRoadNetwork.loadBeijingLinesData()
       // 精灵路
-      // const GSpriteline = new Spriteline(viewer)
-      // GSpriteline.add()
+      GRoadNetwork.loadRoadPicEffect()
+      // 飞线
+      GRoadNetwork.loadFlyLines()
+ 
     }
     onBeforeMount(() => {
       nextTick(async () => {

@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-08-23 13:39:41
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-24 14:15:36
+ * @LastEditTime: 2021-08-26 11:04:11
  */
 /* eslint-disable no-debugger */
 import { getPointsEffectList } from '@/api/effect'
@@ -25,7 +25,6 @@ class Manager {
   async init() {
     // 首先从数据中 获取需要展示的数据
     const res: any = await getPointsEffectList()
-    console.log(res)
     const _this = this
     if (res.data) {
       res.data.forEach((element: any, index: number) => {
