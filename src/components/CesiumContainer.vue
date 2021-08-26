@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-07-20 09:59:07
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-18 11:18:19
+ * @LastEditTime: 2021-08-26 09:37:11
 -->
 <template>
   <div class="Cesium3Dcontainer" id="cesiumContainer"></div>
@@ -48,8 +48,6 @@ export default defineComponent({
         BaseMapConfig.value = await getBaseMapConfig()
         if (!props.isImagery) {
           const MapImageryList: any = await getBaseMapImageryList()
-          /* eslint-disable no-debugger */
-          debugger
           initMap(BaseMapConfig.value, MapImageryList)
         }
       })

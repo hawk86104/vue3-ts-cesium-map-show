@@ -6,15 +6,8 @@
           <template v-slot:content>
             <div class="effect_con">
               <span class="c_title">请选择效果：</span>
-              <el-select v-model="selEffect" size="mini" placeholder="效果类型" @change="effect_selEffect_change">
-                <el-option
-                  v-for="item in effectsList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select><br><br>
+              <el-select-v2 v-model="selEffect" size="mini" placeholder="效果类型" @change="effect_selEffect_change" :options="effectsList">
+              </el-select-v2><br><br>
               <span class='c_title'>lon经度：</span>
               <el-input class="input_c_p" size="small" v-model="positionEffect[0]" @change="effect_position_change"></el-input><br><br>
               <span class='c_title'>lat纬度：</span>
