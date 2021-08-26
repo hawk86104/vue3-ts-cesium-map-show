@@ -80,6 +80,9 @@ class Titleset {
     const modalOne = this.viewer.scene.primitives.add(
       new Cesium.Cesium3DTileset({
         url: ele.url,
+        shadows: 4,
+        maximumScreenSpaceError: 1, // Temporary workaround for low memory mobile devices - Increase maximum error to 8.
+        maximumNumberOfLoadedTiles: 1000 // Temporary workaround for low memory mobile devices - Decrease (disable) tile cache.
       })
     )
     modalOne.readyPromise.then(function(tileset: any) {
@@ -93,7 +96,7 @@ class Titleset {
       tileset.style = new Cesium.Cesium3DTileStyle({
         color: {
           conditions: [['true', `color('${ele.color}')`]],
-        },
+        }
       })
 
       // 设置白膜的打光效果
