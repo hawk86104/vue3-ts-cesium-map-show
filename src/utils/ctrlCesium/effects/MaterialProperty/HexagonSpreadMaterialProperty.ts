@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-07-26 16:43:50
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-23 16:06:47
+ * @LastEditTime: 2021-08-31 09:57:06
  */
 // HexagonSpreadMaterialProperty
 /* eslint-disable no-debugger */
@@ -63,7 +63,7 @@ HexagonSpreadMaterialProperty.prototype.equals = function(other: Other_tmp) {
 }
 Cesium.HexagonSpreadMaterialProperty = HexagonSpreadMaterialProperty
 Cesium.Material.HexagonSpreadMaterialType = 'HexagonSpreadMaterial'
-Cesium.Material.HexagonSpreadMaterialImage = process.env.VUE_APP_API_ASSETS + '/effect/hexagon.png'
+Cesium.Material.HexagonSpreadMaterialImage = 'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/pic/hexagon.png'
 Cesium.Material.HexagonSpreadSource = `
 czm_material czm_getMaterial(czm_materialInput materialInput)
 {
