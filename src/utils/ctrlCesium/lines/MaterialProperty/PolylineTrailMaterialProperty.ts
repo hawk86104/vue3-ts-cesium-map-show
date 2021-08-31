@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-08-26 10:52:24
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-26 10:57:02
+ * @LastEditTime: 2021-08-27 09:49:59
  */
 /* eslint-disable no-debugger */
 
@@ -27,7 +27,10 @@ Object.defineProperties(PolylineTrailMaterialProperty.prototype, {
       return this._definitionChanged
     }
   },
-  color: Cesium.createPropertyDescriptor('color')
+  color: Cesium.createPropertyDescriptor('color'),
+  speed: Cesium.createPropertyDescriptor('speed'),
+  gradient: Cesium.createPropertyDescriptor('gradient'),
+  percent: Cesium.createPropertyDescriptor('percent')
 })
 PolylineTrailMaterialProperty.prototype.getType = function(time: any) {
   return 'PolylineTrail'
@@ -51,7 +54,24 @@ PolylineTrailMaterialProperty.prototype.equals = function(t: Other_tmp) {
 }
 Cesium.PolylineTrailMaterialProperty = PolylineTrailMaterialProperty
 Cesium.Material.PolylineTrailType = 'PolylineTrail'
-Cesium.Material.PolylineTrailSource = 'uniform vec4 color;\nuniform float speed;\nuniform float percent;\nuniform float gradient;\n\nczm_material czm_getMaterial(czm_materialInput materialInput){\n    czm_material material = czm_getDefaultMaterial(materialInput);\n    vec2 st = materialInput.st;\n    float t =fract(czm_frameNumber * speed / 1000.0);\n    t *= (1.0 + percent);\n    float alpha = smoothstep(t- percent, t, st.s) * step(-t, -st.s);\n    alpha += gradient;\n    material.diffuse = color.rgb;\n    material.alpha = alpha;\n    return material;\n}'
+Cesium.Material.PolylineTrailSource = `
+uniform vec4 color;
+uniform float speed;
+uniform float percent;
+uniform float gradient;
+
+czm_material czm_getMaterial(czm_materialInput materialInput){
+  czm_material material = czm_getDefaultMaterial(materialInput);
+  vec2 st = materialInput.st;
+  float t = fract(czm_frameNumber * speed / 1000.0);
+  t *= (1.0 + percent);
+  float alpha = smoothstep(t- percent, t, st.s) * step(-t, -st.s);
+  alpha += gradient;
+  material.diffuse = color.rgb;
+  material.alpha = alpha;
+  return material;
+}
+`
 Cesium.Material._materialCache.addMaterial(Cesium.Material.PolylineTrailType, {
   fabric: {
     type: Cesium.Material.PolylineTrailType,

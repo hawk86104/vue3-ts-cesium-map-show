@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-08-26 10:48:22
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-26 15:20:18
+ * @LastEditTime: 2021-08-31 10:30:49
  */
 /* eslint-disable no-debugger */
 import { init } from './MaterialProperty/PolylineTrailMaterialProperty'
@@ -22,62 +22,46 @@ class RoadNetwork {
   loadFlyLines() {
     init()
     const _this = this
-    Cesium.Resource.fetchJson('./effect/spriteline/nanshan-road1.geojson').then(
-      function(res: any) {
-        let bbox = turf.bbox(res)
-        let points = turf.randomPoint(100, {
-          bbox: bbox,
-        }) // 生成随机点
-        let features = points.features
-        let point: any
-        let startPosition: any
-        let endPosition: any
-        features.forEach((item) => {
-          point = item.geometry.coordinates
-          startPosition = Cesium.Cartesian3.fromDegrees(point[0], point[1], 0)
-          endPosition = Cesium.Cartesian3.fromDegrees(
-            point[0],
-            point[1],
-            3000 * Math.random()
-          )
-          _this.viewer.entities.add({
-            polyline: {
-              positions: [startPosition, endPosition],
-              width: 2,
-              material: new Cesium.PolylineTrailMaterialProperty({
-                speed: 6 * Math.random(),
-                color: new Cesium.Color.fromCssColorString('#32B47E'),
-                percent: 0.1,
-                gradient: 0.01,
-              }),
-            },
-          })
+    Cesium.Resource.fetchJson(
+      'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/geojson/nanshan-road1.geojson'
+    ).then(function(res: any) {
+      let bbox = turf.bbox(res)
+      let points = turf.randomPoint(100, {
+        bbox: bbox,
+      }) // 生成随机点
+      let features = points.features
+      let point: any
+      let startPosition: any
+      let endPosition: any
+      features.forEach((item) => {
+        point = item.geometry.coordinates
+        startPosition = Cesium.Cartesian3.fromDegrees(point[0], point[1], 0)
+        endPosition = Cesium.Cartesian3.fromDegrees(
+          point[0],
+          point[1],
+          3000 * Math.random()
+        )
+        _this.viewer.entities.add({
+          polyline: {
+            positions: [startPosition, endPosition],
+            width: 2,
+            material: new Cesium.PolylineTrailMaterialProperty({
+              speed: 6 * Math.random(),
+              color: new Cesium.Color.fromCssColorString('#32B47E'),
+              percent: 0.1, // 尾巴拖多少长
+              gradient: 0.01, // 变化率
+            }),
+          },
         })
-      }
-    )
+      })
+    })
   }
   // 道路穿梭线
   loadRoadPicEffect() {
     init2()
     const _this = this
     let promise = Cesium.GeoJsonDataSource.load(
-      './effect/spriteline/nanshan-road1.geojson'
-    )
-    promise.then(function(dataSource: any) {
-      _this.viewer.dataSources.add(dataSource)
-      const entities = dataSource.entities.values
-      for (let i = 0; i < entities.length; i++) {
-        const entity = entities[i]
-        entity.polyline.width = 3.0
-        entity.polyline.material = new Cesium.Spriteline1MaterialProperty(
-          2000,
-          './effect/spriteline/spriteline1.png'
-        )
-      }
-    })
-
-    promise = Cesium.GeoJsonDataSource.load(
-      './effect/spriteline/nanshan-road2.geojson'
+      'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/geojson/nanshan-road1.geojson'
     )
     promise.then(function(dataSource: any) {
       _this.viewer.dataSources.add(dataSource)
@@ -87,13 +71,13 @@ class RoadNetwork {
         entity.polyline.width = 3.0
         entity.polyline.material = new Cesium.Spriteline1MaterialProperty(
           1000,
-          './effect/spriteline/spriteline2.png'
+          'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/pic/spriteline1.png'
         )
       }
     })
 
     promise = Cesium.GeoJsonDataSource.load(
-      './effect/spriteline/nanshan-road3.geojson'
+      'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/geojson/nanshan-road2.geojson'
     )
     promise.then(function(dataSource: any) {
       _this.viewer.dataSources.add(dataSource)
@@ -102,17 +86,60 @@ class RoadNetwork {
         const entity = entities[i]
         entity.polyline.width = 3.0
         entity.polyline.material = new Cesium.Spriteline1MaterialProperty(
-          1000,
-          './effect/spriteline/spriteline3.png'
+          500,
+          'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/pic/spriteline2.png'
+        )
+      }
+    })
+
+    promise = Cesium.GeoJsonDataSource.load(
+      'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/geojson/nanshan-road3.geojson'
+    )
+    promise.then(function(dataSource: any) {
+      _this.viewer.dataSources.add(dataSource)
+      const entities = dataSource.entities.values
+      for (let i = 0; i < entities.length; i++) {
+        const entity = entities[i]
+        entity.polyline.width = 3.0
+        entity.polyline.material = new Cesium.Spriteline1MaterialProperty(
+          500,
+          'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/pic/spriteline3.png'
         )
       }
     })
   }
+  loadShenZhengLinesData() {
+    init()
+    const _this = this
+    let promise = Cesium.GeoJsonDataSource.load('https://mapv-data.oss-cn-hangzhou.aliyuncs.com/geojson/shenzhen-nanshan.geojson')
+    promise.then(function(dataSource: any) {
+      _this.viewer.dataSources.add(dataSource)
+      const entities = dataSource.entities.values
+      let del_list = []
+      for (let i = 0; i < entities.length; i++) {
+        const entity = entities[i]
+        if (entity.polyline.positions._value.length > 6) {
+          entity.polyline.width = 3.6
+          entity.polyline.material = new Cesium.PolylineTrailMaterialProperty({
+            speed: 12 * Math.random(),
+            color: new Cesium.Color.fromCssColorString('#32B47E'),
+            percent: 0.3, // 尾巴拖多少长
+            gradient: 0.02, // 变化率
+          })
+        }
+        else {
+          del_list.push(entity.id)
+        }
+      }
+      debugger
+      del_list.forEach((id: number) => {
+        dataSource.entities.removeById(id)
+      })
+    })
+  }
   loadBeijingLinesData() {
     const _this = this
-    Cesium.Resource.fetchJson('./effect/bj-lines-bus.json').then(function(
-      i: any
-    ) {
+    Cesium.Resource.fetchJson('https://mapv-data.oss-cn-hangzhou.aliyuncs.com/geojson/bj-lines-bus.json').then(function(i: any) {
       let t = []
       i.map(function(e: any, i: number) {
         let n = []
