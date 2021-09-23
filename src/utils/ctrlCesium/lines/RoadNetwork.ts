@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-08-26 10:48:22
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-31 10:30:49
+ * @LastEditTime: 2021-09-23 16:41:22
  */
 /* eslint-disable no-debugger */
 import { init } from './MaterialProperty/PolylineTrailMaterialProperty'
@@ -17,6 +17,39 @@ class RoadNetwork {
   constructor(viewer: any, id: string) {
     this.viewer = viewer
     this.id = id
+  }
+  addFlyLines(bbox: any, color: string, width: number, height: number, speed: number, percent: number, gradient: number, random: number) {
+    init()
+    const _this = this
+    // 生成随机点
+    let points = turf.randomPoint(random, {
+      bbox: bbox,
+    })
+    let features = points.features
+    let point: any
+    let startPosition: any
+    let endPosition: any
+    features.forEach((item) => {
+      point = item.geometry.coordinates
+      startPosition = Cesium.Cartesian3.fromDegrees(point[0], point[1], 0)
+      endPosition = Cesium.Cartesian3.fromDegrees(
+        point[0],
+        point[1],
+        height * Math.random()
+      )
+      _this.viewer.entities.add({
+        polyline: {
+          positions: [startPosition, endPosition],
+          width: width,
+          material: new Cesium.PolylineTrailMaterialProperty({
+            speed: speed * Math.random(),
+            color: new Cesium.Color.fromCssColorString(color),
+            percent: percent, // 尾巴拖多少长
+            gradient: gradient, // 变化率
+          }),
+        },
+      })
+    })
   }
   // 飞线
   loadFlyLines() {
@@ -131,7 +164,6 @@ class RoadNetwork {
           del_list.push(entity.id)
         }
       }
-      debugger
       del_list.forEach((id: number) => {
         dataSource.entities.removeById(id)
       })
