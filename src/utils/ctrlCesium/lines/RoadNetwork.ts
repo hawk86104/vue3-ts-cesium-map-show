@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-08-26 10:48:22
  * @LastEditors: Hawk
- * @LastEditTime: 2021-09-23 16:41:22
+ * @LastEditTime: 2021-09-27 10:03:06
  */
 /* eslint-disable no-debugger */
 import { init } from './MaterialProperty/PolylineTrailMaterialProperty'
@@ -14,9 +14,50 @@ import * as turf from '@turf/turf'
 class RoadNetwork {
   viewer: any
   id: string
+  FlyLinesEntities: any
   constructor(viewer: any, id: string) {
     this.viewer = viewer
     this.id = id
+    this.FlyLinesEntities = []
+  }
+  changeFlyLinesPercent(val: number) {
+    const _this = this
+    this.FlyLinesEntities.forEach((item) => {
+      let entity = _this.viewer.entities.getById(item.id)
+      entity.polyline.material.percent = val
+    })
+  }
+  changeFlyLinesGradient(val: number) {
+    const _this = this
+    this.FlyLinesEntities.forEach((item) => {
+      let entity = _this.viewer.entities.getById(item.id)
+      entity.polyline.material.gradient = val
+    })
+  }
+  changeFlyLinesColor(color: string) {
+    const _this = this
+    this.FlyLinesEntities.forEach((item) => {
+      let entity = _this.viewer.entities.getById(item.id)
+      entity.polyline.material.color = new Cesium.Color.fromCssColorString(color)
+    })
+  }
+  changeFlyLinesWidth(width: number) {
+    const _this = this
+    this.FlyLinesEntities.forEach((item) => {
+      let entity = _this.viewer.entities.getById(item.id)
+      entity.polyline.width = width
+    })
+  }
+  remakeFlyLines(bbox: any, color: string, width: number, height: number, speed: number, percent: number, gradient: number, random: number) {
+    this.clearFlyLines()
+    this.addFlyLines(bbox, color, width, height, speed, percent, gradient, random)
+  }
+  clearFlyLines() {
+    const _this = this
+    this.FlyLinesEntities.forEach((item) => {
+      _this.viewer.entities.removeById(item.id)
+    })
+    this.FlyLinesEntities = []
   }
   addFlyLines(bbox: any, color: string, width: number, height: number, speed: number, percent: number, gradient: number, random: number) {
     init()
@@ -37,7 +78,7 @@ class RoadNetwork {
         point[1],
         height * Math.random()
       )
-      _this.viewer.entities.add({
+      _this.FlyLinesEntities.push(_this.viewer.entities.add({
         polyline: {
           positions: [startPosition, endPosition],
           width: width,
@@ -49,6 +90,7 @@ class RoadNetwork {
           }),
         },
       })
+      )
     })
   }
   // 飞线
