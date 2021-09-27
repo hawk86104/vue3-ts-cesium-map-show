@@ -5,7 +5,7 @@
  * @Autor: Hawk
  * @Date: 2021-09-23 15:08:55
  * @LastEditors: Hawk
- * @LastEditTime: 2021-09-27 10:01:48
+ * @LastEditTime: 2021-09-27 11:18:02
 -->
 <template>
   <CesiumContainer @update:onReadyMap="onReadyMap">
@@ -37,6 +37,7 @@
               <el-slider v-model="percent" :min="0.01" :max="0.6" :step="0.02" @input="lines_percent_change"></el-slider><br>
               <span class='c_title'>变化率：{{gradient}} </span>
               <el-slider v-model="gradient" :min="0.01" :max="0.3" :step="0.02" @input="lines_gradient_change"></el-slider><br>
+              <el-button @click="save" size="mini">保存当前设置</el-button>
             </div>
           </template>
         </PannelBox>
@@ -70,22 +71,22 @@ export default defineComponent({
     bbox.value[3] = getUrlParma('endPoint_lat') ? getUrlParma('endPoint_lat') : bbox.value[3]
 
     const width = ref(2)
-    width.value = getUrlParma('width') ? getUrlParma('width') : width.value
+    width.value = getUrlParma('width') ? parseFloat(getUrlParma('width')) : width.value
 
     const height = ref(3000)
-    height.value = getUrlParma('height') ? getUrlParma('height') : height.value
+    height.value = getUrlParma('height') ? parseFloat(getUrlParma('height')) : height.value
 
     const speed = ref(6)
-    speed.value = getUrlParma('speed') ? getUrlParma('speed') : speed.value
+    speed.value = getUrlParma('speed') ? parseFloat(getUrlParma('speed')) : speed.value
 
     const percent = ref(0.1)
-    percent.value = getUrlParma('percent') ? getUrlParma('percent') : percent.value
+    percent.value = getUrlParma('percent') ? parseFloat(getUrlParma('percent')) : percent.value
 
     const gradient = ref(0.1)
-    gradient.value = getUrlParma('gradient') ? getUrlParma('gradient') : gradient.value
+    gradient.value = getUrlParma('gradient') ? parseFloat(getUrlParma('gradient')) : gradient.value
 
     const random = ref(300)
-    random.value = getUrlParma('random') ? getUrlParma('random') : random.value
+    random.value = getUrlParma('random') ? parseFloat(getUrlParma('random')) : random.value
 
     const change_color = (val: string) => {
       if (GRoadNetwork && window.Gviewer.entities && val) {
@@ -94,25 +95,25 @@ export default defineComponent({
     }
 
     const lines_gradient_change = (val: number) => {
-      if (window.Gviewer.entities && GRoadNetwork) {
+      if (GRoadNetwork && window.Gviewer.entities) {
         GRoadNetwork.changeFlyLinesGradient(val)
       }
     }
 
     const lines_percent_change = (val: number) => {
-      if (window.Gviewer.entities && GRoadNetwork) {
+      if (GRoadNetwork && window.Gviewer.entities) {
         GRoadNetwork.changeFlyLinesPercent(val)
       }
     }
 
     const lines_width_change = (val: number) => {
-      if (window.Gviewer.entities && GRoadNetwork) {
+      if (GRoadNetwork && window.Gviewer.entities) {
         GRoadNetwork.changeFlyLinesWidth(val)
       }
     }
 
     const makeLines = () => {
-      if (window.Gviewer.entities && GRoadNetwork) {
+      if (GRoadNetwork && window.Gviewer.entities) {
         // 格式化 bbox string 转float
         let pe: any = bbox.value
         bbox.value = [parseFloat(pe[0]), parseFloat(pe[1]), parseFloat(pe[2]), parseFloat(pe[3])]
@@ -127,10 +128,40 @@ export default defineComponent({
 
       // 公路效果
       GRoadNetwork = new RoadNetwork(window.Gviewer, 'road')
+      let pe: any = bbox.value
+      bbox.value = [parseFloat(pe[0]), parseFloat(pe[1]), parseFloat(pe[2]), parseFloat(pe[3])]
       GRoadNetwork.addFlyLines(bbox.value, color.value, width.value, height.value, speed.value, percent.value, gradient.value, random.value)
     }
+
+    const save = () => {
+      ElMessageBox.confirm('提交保存当前效果配置信息, 是否继续?', '提示', {
+        confirmButtonText: '保存',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
+          // 保存现有 效果配置 调用后台
+          (window.parent as any).postMessage({
+            bbox: JSON.stringify(bbox.value),
+            color: color.value,
+            width: width.value,
+            height: height.value,
+            speed: speed.value,
+            percent: percent.value,
+            gradient: gradient.value,
+            random: random.value
+          }, '*')
+          ElMessage({
+            type: 'success',
+            message: '保存成功!',
+          })
+        })
+        .catch((e:any ) => {
+          console.log(e)
+        })
+    }
     return {
-      onReadyMap, random, makeLines, height, width, lines_width_change, color, change_color, percent, lines_percent_change, lines_gradient_change, gradient, speed, bbox
+      onReadyMap, random, makeLines, height, width, lines_width_change, color, change_color, percent, lines_percent_change, lines_gradient_change, gradient, speed, bbox, save
     }
   },
 })
