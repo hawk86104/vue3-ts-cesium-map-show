@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-08-26 10:48:22
  * @LastEditors: Hawk
- * @LastEditTime: 2021-09-28 14:40:23
+ * @LastEditTime: 2021-09-28 15:39:02
  */
 /* eslint-disable no-debugger */
 import { init } from './MaterialProperty/PolylineTrailMaterialProperty'
@@ -16,11 +16,13 @@ class RoadNetwork {
   id: string
   FlyLinesEntities: any
   BusLinesEntities: any
+  RoadPicEntities: any
   constructor(viewer: any, id: string) {
     this.viewer = viewer
     this.id = id
     this.FlyLinesEntities = []
     this.BusLinesEntities = []
+    this.RoadPicEntities = []
   }
   changeLinesPercent(type: string, val: number) {
     let entityC = null
@@ -78,8 +80,17 @@ class RoadNetwork {
     if (type === 'BusLines') {
       entityC = this.BusLinesEntities
     }
+    if (type === 'RoadPic') {
+      entityC = this.RoadPicEntities
+    }
     entityC.forEach((item: any) => {
       item.polyline.width = width
+    })
+  }
+  changeLinesTime(type: string, time: number) {
+    let entityC = this.RoadPicEntities
+    entityC.forEach((item: any) => {
+      item.polyline.material.duration = time
     })
   }
   remakeFlyLines(bbox: any, color: string, width: number, height: number, speed: number, percent: number, gradient: number, random: number) {
@@ -153,6 +164,20 @@ class RoadNetwork {
       del_list.forEach((id: number) => {
         dataSource.entities.removeById(id)
       })
+    })
+  }
+  addRoadPic(url: string, Picurl: string, width: number, time: number) {
+    init2()
+    const _this = this
+    let promise = Cesium.GeoJsonDataSource.load(url)
+    promise.then(function(dataSource: any) {
+      _this.viewer.dataSources.add(dataSource)
+      _this.RoadPicEntities = dataSource.entities.values
+      for (let i = 0; i < _this.RoadPicEntities.length; i++) {
+        const entity = _this.RoadPicEntities[i]
+        entity.polyline.width = width
+        entity.polyline.material = new Cesium.Spriteline1MaterialProperty(time, Picurl)
+      }
     })
   }
   // 飞线 [ 用于 测试 ]
