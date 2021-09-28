@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-08-26 10:48:22
  * @LastEditors: Hawk
- * @LastEditTime: 2021-09-27 10:03:06
+ * @LastEditTime: 2021-09-28 14:40:23
  */
 /* eslint-disable no-debugger */
 import { init } from './MaterialProperty/PolylineTrailMaterialProperty'
@@ -15,37 +15,71 @@ class RoadNetwork {
   viewer: any
   id: string
   FlyLinesEntities: any
+  BusLinesEntities: any
   constructor(viewer: any, id: string) {
     this.viewer = viewer
     this.id = id
     this.FlyLinesEntities = []
+    this.BusLinesEntities = []
   }
-  changeFlyLinesPercent(val: number) {
-    const _this = this
-    this.FlyLinesEntities.forEach((item) => {
-      let entity = _this.viewer.entities.getById(item.id)
-      entity.polyline.material.percent = val
+  changeLinesPercent(type: string, val: number) {
+    let entityC = null
+    if (type === 'FlyLines') {
+      entityC = this.FlyLinesEntities
+    }
+    if (type === 'BusLines') {
+      entityC = this.BusLinesEntities
+    }
+    entityC.forEach((item: any) => {
+      item.polyline.material.percent = val
     })
   }
-  changeFlyLinesGradient(val: number) {
-    const _this = this
-    this.FlyLinesEntities.forEach((item) => {
-      let entity = _this.viewer.entities.getById(item.id)
-      entity.polyline.material.gradient = val
+  changeLinesSpeed(type: string, val: number) {
+    let entityC = null
+    if (type === 'FlyLines') {
+      entityC = this.FlyLinesEntities
+    }
+    if (type === 'BusLines') {
+      entityC = this.BusLinesEntities
+    }
+    entityC.forEach((item: any) => {
+      item.polyline.material.speed = val
     })
   }
-  changeFlyLinesColor(color: string) {
-    const _this = this
-    this.FlyLinesEntities.forEach((item) => {
-      let entity = _this.viewer.entities.getById(item.id)
-      entity.polyline.material.color = new Cesium.Color.fromCssColorString(color)
+  changeLinesGradient(type: string, val: number) {
+    let entityC = null
+    if (type === 'FlyLines') {
+      entityC = this.FlyLinesEntities
+    }
+    if (type === 'BusLines') {
+      entityC = this.BusLinesEntities
+    }
+    entityC.forEach((item: any) => {
+      item.polyline.material.gradient = val
     })
   }
-  changeFlyLinesWidth(width: number) {
-    const _this = this
-    this.FlyLinesEntities.forEach((item) => {
-      let entity = _this.viewer.entities.getById(item.id)
-      entity.polyline.width = width
+  changeLinesColor(type: string, color: string) {
+    let entityC = null
+    if (type === 'FlyLines') {
+      entityC = this.FlyLinesEntities
+    }
+    if (type === 'BusLines') {
+      entityC = this.BusLinesEntities
+    }
+    entityC.forEach((item: any) => {
+      item.polyline.material.color = new Cesium.Color.fromCssColorString(color)
+    })
+  }
+  changeLinesWidth(type: string, width: number) {
+    let entityC = null
+    if (type === 'FlyLines') {
+      entityC = this.FlyLinesEntities
+    }
+    if (type === 'BusLines') {
+      entityC = this.BusLinesEntities
+    }
+    entityC.forEach((item: any) => {
+      item.polyline.width = width
     })
   }
   remakeFlyLines(bbox: any, color: string, width: number, height: number, speed: number, percent: number, gradient: number, random: number) {
@@ -93,7 +127,36 @@ class RoadNetwork {
       )
     })
   }
-  // 飞线
+  addBusLines(url: string, color: string, width: number, speed: number, percent: number, gradient: number) {
+    init()
+    const _this = this
+    let promise = Cesium.GeoJsonDataSource.load(url)
+    promise.then(function(dataSource: any) {
+      _this.viewer.dataSources.add(dataSource)
+      _this.BusLinesEntities = dataSource.entities.values
+      let del_list = []
+      for (let i = 0; i < _this.BusLinesEntities.length; i++) {
+        const entity = _this.BusLinesEntities[i]
+        if (entity.polyline.positions._value.length > 6) { // 这里把街道复杂度小余6的进行筛除
+          entity.polyline.width = width
+          entity.polyline.material = new Cesium.PolylineTrailMaterialProperty({
+            speed: speed * Math.random(),
+            color: new Cesium.Color.fromCssColorString(color),
+            percent: percent, // 尾巴拖多少长
+            gradient: gradient, // 变化率
+          })
+        }
+        else {
+          del_list.push(entity.id)
+        }
+      }
+      del_list.forEach((id: number) => {
+        dataSource.entities.removeById(id)
+      })
+    })
+  }
+  // 飞线 [ 用于 测试 ]
+  // 代码
   loadFlyLines() {
     init()
     const _this = this
