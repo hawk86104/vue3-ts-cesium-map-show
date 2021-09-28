@@ -4,9 +4,10 @@
  * @Autor: Hawk
  * @Date: 2021-08-26 10:48:22
  * @LastEditors: Hawk
- * @LastEditTime: 2021-09-28 15:39:02
+ * @LastEditTime: 2021-09-28 16:28:17
  */
 /* eslint-disable no-debugger */
+import { getLinesEffectList } from '@/api/effect'
 import { init } from './MaterialProperty/PolylineTrailMaterialProperty'
 import { init as init2 } from './MaterialProperty/Spriteline1MaterialProperty'
 
@@ -23,6 +24,34 @@ class RoadNetwork {
     this.FlyLinesEntities = []
     this.BusLinesEntities = []
     this.RoadPicEntities = []
+  }
+  async init() {
+    // 首先从数据中 获取需要展示的数据
+    const res: any = await getLinesEffectList()
+    debugger
+    const _this = this
+    if (res.data) {
+      res.data.forEach((element: any, index: number) => {
+        let setup_param = JSON.parse(element.setup_param)
+        for (let key in setup_param) {
+          if (key !== 'color') {
+            setup_param[key] = parseFloat(setup_param[key])
+          }
+        }
+        if (element.type === 'FlyLines') {
+          this.addFlyLines([setup_param.startPoint_lng, setup_param.startPoint_lat, setup_param.endPoint_ing, setup_param.endPoint_lat]
+            , setup_param.color, element.width, setup_param.height, setup_param.speed, setup_param.percent, setup_param.gradient, setup_param.random)
+        }
+        else if (element.type === 'BusLines') {
+          this.addBusLines(element.geojsonfile,
+            setup_param.color, element.width, setup_param.speed, setup_param.percent, setup_param.gradient
+          )
+        }
+        else if (element.type === 'RoadPic') {
+          this.addRoadPic(element.geojsonfile, element.effectimage, element.width, setup_param.time)
+        }
+      })
+    }
   }
   changeLinesPercent(type: string, val: number) {
     let entityC = null

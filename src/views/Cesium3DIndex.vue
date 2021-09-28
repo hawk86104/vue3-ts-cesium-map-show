@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-06-17 15:13:58
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-31 11:03:24
+ * @LastEditTime: 2021-09-28 16:30:47
 -->
 <template>
   <div class="Cesium3DIndex" id="cesiumContainer"></div>
@@ -44,18 +44,12 @@ export default defineComponent({
 
       // 处理 配置好的点效果列表
       const GManager = new Manager(viewer)
-      // GManager.init()
+      GManager.init()
 
       // 公路效果
       const GRoadNetwork = new RoadNetwork(viewer, 'road')
-      // bus路网
-      // GRoadNetwork.loadBeijingLinesData()
-      GRoadNetwork.loadShenZhengLinesData()
-      // 精灵路
-      // GRoadNetwork.loadRoadPicEffect()
-      // 飞线
-      // GRoadNetwork.loadFlyLines()
- 
+      GRoadNetwork.init()
+
     }
     onBeforeMount(() => {
       nextTick(async () => {
