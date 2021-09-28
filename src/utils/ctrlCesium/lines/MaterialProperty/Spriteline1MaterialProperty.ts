@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-07-26 14:28:03
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-26 18:46:04
+ * @LastEditTime: 2021-09-28 15:21:49
  */
 /* eslint-disable no-debugger */
 // 精灵穿梭路 光效果
@@ -27,6 +27,7 @@ Object.defineProperties(Spriteline1MaterialProperty.prototype, {
     },
   },
   color: Cesium.createPropertyDescriptor('color'),
+  duration: Cesium.createPropertyDescriptor('duration')
 })
 Spriteline1MaterialProperty.prototype.getType = function(time: any) {
   return 'Spriteline1'

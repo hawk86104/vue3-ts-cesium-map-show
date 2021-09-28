@@ -5,7 +5,7 @@
  * @Autor: Hawk
  * @Date: 2021-09-23 15:08:55
  * @LastEditors: Hawk
- * @LastEditTime: 2021-09-28 14:16:44
+ * @LastEditTime: 2021-09-28 15:41:50
 -->
 <template>
   <CesiumContainer @update:onReadyMap="onReadyMap">
@@ -29,16 +29,22 @@
                 <el-slider v-model="height" :min="100" :max="10000" :step="100"></el-slider>
                 <el-divider>以上需要重新生成</el-divider>
               </template>
-              <span class='c_title'>速度：{{speed}} </span>
-              <el-slider v-model="speed" :min="0.5" :max="20" :step="0.5"  @input="lines_speed_change"></el-slider>
               <span class='c_title'>宽度：{{width}} </span>
               <el-slider v-model="width" :min="0.1" :max="10" :step="0.1" @input="lines_width_change"></el-slider>
-              <span class='c_title'>效果颜色：{{color}}</span>
-              <el-color-picker v-model="color" size="mini" class="color-pick-s" @active-change="change_color"></el-color-picker><br><br>
-              <span class='c_title'>拖尾长：{{percent}} </span>
-              <el-slider v-model="percent" :min="0.01" :max="0.6" :step="0.02" @input="lines_percent_change"></el-slider><br>
-              <span class='c_title'>变化率：{{gradient}} </span>
-              <el-slider v-model="gradient" :min="0.01" :max="0.3" :step="0.02" @input="lines_gradient_change"></el-slider><br>
+              <template v-if="type==='RoadPic'">
+                <span class='c_title'>延迟时间: {{time}} ms</span>
+                <el-slider v-model="time" :min="100" :max="10000" :step="100" @input="lines_time_change"></el-slider>
+              </template>
+              <template v-if="type!=='RoadPic'">
+                <span class='c_title'>速度：{{speed}} </span>
+                <el-slider v-model="speed" :min="0.5" :max="20" :step="0.5"  @input="lines_speed_change"></el-slider>
+                <span class='c_title'>效果颜色：{{color}}</span>
+                <el-color-picker v-model="color" size="mini" class="color-pick-s" @active-change="change_color"></el-color-picker><br><br>
+                <span class='c_title'>拖尾长：{{percent}} </span>
+                <el-slider v-model="percent" :min="0.01" :max="0.6" :step="0.02" @input="lines_percent_change"></el-slider><br>
+                <span class='c_title'>变化率：{{gradient}} </span>
+                <el-slider v-model="gradient" :min="0.01" :max="0.3" :step="0.02" @input="lines_gradient_change"></el-slider><br>
+              </template>
               <el-button @click="save" size="mini">保存当前设置</el-button>
             </div>
           </template>
@@ -75,8 +81,11 @@ export default defineComponent({
     const width = ref(2)
     width.value = getUrlParma('width') ? parseFloat(getUrlParma('width')) : width.value
 
-    const Geojsonfile = ref('') // https://mapv-data.oss-cn-hangzhou.aliyuncs.com/geojson/shenzhen-nanshan.geojson
-    Geojsonfile.value = getUrlParma('Geojsonfile') ? decodeURI(getUrlParma('Geojsonfile')) : Geojsonfile.value
+    const Geojsonfile = getUrlParma('Geojsonfile') ? decodeURI(getUrlParma('Geojsonfile')) : ''
+    const Effectimage = getUrlParma('Effectimage') ? decodeURI(getUrlParma('Effectimage')) : ''
+    
+    const time = ref(1000)
+    time.value = getUrlParma('time') ? parseFloat(getUrlParma('time')) : time.value
 
     const height = ref(3000)
     height.value = getUrlParma('height') ? parseFloat(getUrlParma('height')) : height.value
@@ -121,6 +130,11 @@ export default defineComponent({
         GRoadNetwork.changeLinesWidth(type.value, val)
       }
     }
+    const lines_time_change = (val: number) => {
+      if (GRoadNetwork && window.Gviewer.entities) {
+        GRoadNetwork.changeLinesTime(type.value, val)
+      }
+    }
     const makeLines = () => {
       if (GRoadNetwork && window.Gviewer.entities) {
         // 格式化 bbox string 转float
@@ -141,9 +155,12 @@ export default defineComponent({
         GRoadNetwork.addFlyLines(bbox.value, color.value, width.value, height.value, speed.value, percent.value, gradient.value, random.value)
       }
       else if (type.value === 'BusLines') {
-        GRoadNetwork.addBusLines(Geojsonfile.value,
+        GRoadNetwork.addBusLines(Geojsonfile,
           color.value, width.value, speed.value, percent.value, gradient.value
         )
+      }
+      else if (type.value === 'RoadPic') {
+        GRoadNetwork.addRoadPic(Geojsonfile, Effectimage, width.value, time.value)
       }
     }
     const save = () => {
@@ -175,6 +192,12 @@ export default defineComponent({
               gradient: gradient.value
             }
           }
+          else if (type.value === 'RoadPic') {
+            postData = {
+              width: width.value,
+              time: time.value
+            }
+          }
 
           // 保存现有 效果配置 调用后台
           (window.parent as any).postMessage(postData, '*')
@@ -189,7 +212,7 @@ export default defineComponent({
     }
     return {
       onReadyMap, type, random, makeLines, height, width, lines_width_change, color, change_color, percent, lines_percent_change,
-      lines_gradient_change, gradient, speed, lines_speed_change, bbox, save, Geojsonfile
+      lines_gradient_change, gradient, speed, lines_speed_change, bbox, save, time, lines_time_change
     }
   },
 })
