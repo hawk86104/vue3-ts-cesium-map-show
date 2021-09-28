@@ -5,7 +5,7 @@
  * @Autor: Hawk
  * @Date: 2021-09-23 15:08:55
  * @LastEditors: Hawk
- * @LastEditTime: 2021-09-27 11:18:02
+ * @LastEditTime: 2021-09-28 14:16:44
 -->
 <template>
   <CesiumContainer @update:onReadyMap="onReadyMap">
@@ -14,21 +14,23 @@
         <PannelBox>
           <template v-slot:content>
             <div class="lines_con">
-              <span class='c_title'>飞线数：{{random}} 条 <el-button @click="makeLines" size="mini" style="float: right;margin-top: -6px;">生成飞线</el-button></span>
-              <el-slider v-model="random" :min="10" :max="1000" :step="10"></el-slider>
-              <span class='c_title'>起始lon经度：</span>
-              <el-input type="number" class="input_c_p" size="small" v-model="bbox[0]" ></el-input><br><br>
-              <span class='c_title'>起始lat纬度：</span>
-              <el-input type="number" class="input_c_p" size="small" v-model="bbox[1]"></el-input><br><br>
-              <span class='c_title'>终止lon经度：</span>
-              <el-input type="number" class="input_c_p" size="small" v-model="bbox[2]" ></el-input><br><br>
-              <span class='c_title'>终止lat纬度：</span>
-              <el-input type="number" class="input_c_p" size="small" v-model="bbox[3]"></el-input><br><br>
-              <span class='c_title'>最大高度：{{height}} 米</span>
-              <el-slider v-model="height" :min="100" :max="10000" :step="100"></el-slider>
+              <template v-if="type==='FlyLines'">
+                <span class='c_title'>飞线数：{{random}} 条 <el-button @click="makeLines" size="mini" style="float: right;margin-top: -6px;">重新生成</el-button></span>
+                <el-slider v-model="random" :min="10" :max="1000" :step="10"></el-slider>
+                <span class='c_title'>起始lon经度：</span>
+                <el-input type="number" class="input_c_p" size="small" v-model="bbox[0]" ></el-input><br><br>
+                <span class='c_title'>起始lat纬度：</span>
+                <el-input type="number" class="input_c_p" size="small" v-model="bbox[1]"></el-input><br><br>
+                <span class='c_title'>终止lon经度：</span>
+                <el-input type="number" class="input_c_p" size="small" v-model="bbox[2]" ></el-input><br><br>
+                <span class='c_title'>终止lat纬度：</span>
+                <el-input type="number" class="input_c_p" size="small" v-model="bbox[3]"></el-input><br><br>
+                <span class='c_title'>最大高度：{{height}} 米</span>
+                <el-slider v-model="height" :min="100" :max="10000" :step="100"></el-slider>
+                <el-divider>以上需要重新生成</el-divider>
+              </template>
               <span class='c_title'>速度：{{speed}} </span>
-              <el-slider v-model="speed" :min="0.5" :max="20" :step="0.5"></el-slider>
-              <el-divider>以上需要重新生成</el-divider>
+              <el-slider v-model="speed" :min="0.5" :max="20" :step="0.5"  @input="lines_speed_change"></el-slider>
               <span class='c_title'>宽度：{{width}} </span>
               <el-slider v-model="width" :min="0.1" :max="10" :step="0.1" @input="lines_width_change"></el-slider>
               <span class='c_title'>效果颜色：{{color}}</span>
@@ -61,7 +63,7 @@ export default defineComponent({
   components: { CesiumContainer, PannelBox },
   setup() {
     let GRoadNetwork = null
-    const color = ref('rgba(198, 6, 88, 0.7)')
+    const color = ref('#FF006D')
     color.value = getUrlParma('color') ? getUrlParma('color') : color.value
 
     const bbox = ref([113.89, 22.48, 113.9694, 22.5692])
@@ -73,10 +75,13 @@ export default defineComponent({
     const width = ref(2)
     width.value = getUrlParma('width') ? parseFloat(getUrlParma('width')) : width.value
 
+    const Geojsonfile = ref('') // https://mapv-data.oss-cn-hangzhou.aliyuncs.com/geojson/shenzhen-nanshan.geojson
+    Geojsonfile.value = getUrlParma('Geojsonfile') ? decodeURI(getUrlParma('Geojsonfile')) : Geojsonfile.value
+
     const height = ref(3000)
     height.value = getUrlParma('height') ? parseFloat(getUrlParma('height')) : height.value
 
-    const speed = ref(6)
+    const speed = ref(6.0)
     speed.value = getUrlParma('speed') ? parseFloat(getUrlParma('speed')) : speed.value
 
     const percent = ref(0.1)
@@ -88,30 +93,34 @@ export default defineComponent({
     const random = ref(300)
     random.value = getUrlParma('random') ? parseFloat(getUrlParma('random')) : random.value
 
+    const type = ref('FlyLines')
+    type.value = getUrlParma('type') ? getUrlParma('type') : type.value
+
     const change_color = (val: string) => {
       if (GRoadNetwork && window.Gviewer.entities && val) {
-        GRoadNetwork.changeFlyLinesColor(val)
+        GRoadNetwork.changeLinesColor(type.value, val)
       }
     }
-
     const lines_gradient_change = (val: number) => {
       if (GRoadNetwork && window.Gviewer.entities) {
-        GRoadNetwork.changeFlyLinesGradient(val)
+        GRoadNetwork.changeLinesGradient(type.value, val)
       }
     }
-
+    const lines_speed_change = (val: number) => {
+      if (GRoadNetwork && window.Gviewer.entities) {
+        GRoadNetwork.changeLinesSpeed(type.value, val)
+      }
+    }
     const lines_percent_change = (val: number) => {
       if (GRoadNetwork && window.Gviewer.entities) {
-        GRoadNetwork.changeFlyLinesPercent(val)
+        GRoadNetwork.changeLinesPercent(type.value, val)
       }
     }
-
     const lines_width_change = (val: number) => {
       if (GRoadNetwork && window.Gviewer.entities) {
-        GRoadNetwork.changeFlyLinesWidth(val)
+        GRoadNetwork.changeLinesWidth(type.value, val)
       }
     }
-
     const makeLines = () => {
       if (GRoadNetwork && window.Gviewer.entities) {
         // 格式化 bbox string 转float
@@ -120,19 +129,23 @@ export default defineComponent({
         GRoadNetwork.remakeFlyLines(bbox.value, color.value, width.value, height.value, speed.value, percent.value, gradient.value, random.value)
       }
     }
-
     const onReadyMap = () => {
       // 载入默认白膜
       const GTitleset = new Titleset(window.Gviewer)
       GTitleset.init()
-
       // 公路效果
       GRoadNetwork = new RoadNetwork(window.Gviewer, 'road')
-      let pe: any = bbox.value
-      bbox.value = [parseFloat(pe[0]), parseFloat(pe[1]), parseFloat(pe[2]), parseFloat(pe[3])]
-      GRoadNetwork.addFlyLines(bbox.value, color.value, width.value, height.value, speed.value, percent.value, gradient.value, random.value)
+      if (type.value === 'FlyLines') {
+        let pe: any = bbox.value
+        bbox.value = [parseFloat(pe[0]), parseFloat(pe[1]), parseFloat(pe[2]), parseFloat(pe[3])]
+        GRoadNetwork.addFlyLines(bbox.value, color.value, width.value, height.value, speed.value, percent.value, gradient.value, random.value)
+      }
+      else if (type.value === 'BusLines') {
+        GRoadNetwork.addBusLines(Geojsonfile.value,
+          color.value, width.value, speed.value, percent.value, gradient.value
+        )
+      }
     }
-
     const save = () => {
       ElMessageBox.confirm('提交保存当前效果配置信息, 是否继续?', '提示', {
         confirmButtonText: '保存',
@@ -140,17 +153,31 @@ export default defineComponent({
         type: 'warning',
       })
         .then(() => {
+          let postData = null
+          if (type.value === 'FlyLines') {
+            postData = {
+              bbox: JSON.stringify(bbox.value),
+              color: color.value,
+              width: width.value,
+              height: height.value,
+              speed: speed.value,
+              percent: percent.value,
+              gradient: gradient.value,
+              random: random.value
+            }
+          }
+          else if (type.value === 'BusLines') {
+            postData = {
+              color: color.value,
+              width: width.value,
+              speed: speed.value,
+              percent: percent.value,
+              gradient: gradient.value
+            }
+          }
+
           // 保存现有 效果配置 调用后台
-          (window.parent as any).postMessage({
-            bbox: JSON.stringify(bbox.value),
-            color: color.value,
-            width: width.value,
-            height: height.value,
-            speed: speed.value,
-            percent: percent.value,
-            gradient: gradient.value,
-            random: random.value
-          }, '*')
+          (window.parent as any).postMessage(postData, '*')
           ElMessage({
             type: 'success',
             message: '保存成功!',
@@ -161,7 +188,8 @@ export default defineComponent({
         })
     }
     return {
-      onReadyMap, random, makeLines, height, width, lines_width_change, color, change_color, percent, lines_percent_change, lines_gradient_change, gradient, speed, bbox, save
+      onReadyMap, type, random, makeLines, height, width, lines_width_change, color, change_color, percent, lines_percent_change,
+      lines_gradient_change, gradient, speed, lines_speed_change, bbox, save, Geojsonfile
     }
   },
 })
