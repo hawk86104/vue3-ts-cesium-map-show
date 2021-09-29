@@ -28,7 +28,6 @@ class RoadNetwork {
   async init() {
     // 首先从数据中 获取需要展示的数据
     const res: any = await getLinesEffectList()
-    debugger
     const _this = this
     if (res.data) {
       res.data.forEach((element: any, index: number) => {

@@ -18,7 +18,8 @@ class Controller {
   init(BaseMapConfig: any, MapImageryList: any) {
     const mapID = 'cesiumContainer'
     let imageryProviderConfig = new Cesium.SingleTileImageryProvider({
-      url: process.env.VUE_APP_API_ASSETS + 'Cesium-1.82-hawk/background.png',
+      // url: process.env.VUE_APP_API_ASSETS + 'Cesium-1.82-hawk/background.png',
+      url: 'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/Cesium-1.82-hawk/background.png',
     })
     if (MapImageryList.length !== 0) {
       imageryProviderConfig = this.setOneimageryProvider(MapImageryList[0])

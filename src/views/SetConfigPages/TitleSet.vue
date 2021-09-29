@@ -79,7 +79,6 @@ export default defineComponent({
       }
     }
     const effect_color_change = (val: string) => {
-      debugger
       if (!val) {
         val = 'rgb(255,255,255)'
         effect_color.value = val
