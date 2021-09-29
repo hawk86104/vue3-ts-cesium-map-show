@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-08-23 13:39:41
  * @LastEditors: Hawk
- * @LastEditTime: 2021-08-26 11:04:11
+ * @LastEditTime: 2021-09-28 16:43:54
  */
 /* eslint-disable no-debugger */
 import { getPointsEffectList } from '@/api/effect'
@@ -28,11 +28,11 @@ class Manager {
     const _this = this
     if (res.data) {
       res.data.forEach((element: any, index: number) => {
-        _this.add(element)
+        _this.add(element, index)
       })
     }
   }
-  add(ele: any) {
+  add(ele: any, index: number) {
     let curEntityC = null
     let pe = [ele.lon, ele.lat, ele.height]
     let ext: any
@@ -40,21 +40,21 @@ class Manager {
       case 'CircleDiffusion':
         curEntityC = new EllipsoidFade(
           this.viewer,
-          'effect-set-config' + ele.effect_type
+          'effect-set-config' + ele.effect_type + index
         )
         curEntityC.add(pe, ele.color, ele.radius, ele.duration)
         break
       case 'Scanline':
         curEntityC = new Scanline(
           this.viewer,
-          'effect-set-config' + ele.effect_type
+          'effect-set-config' + ele.effect_type + index
         )
         curEntityC.add(pe, ele.color, ele.radius, ele.duration)
         break
       case 'CircleWave':
         curEntityC = new CircleWave(
           this.viewer,
-          'effect-set-config' + ele.effect_type
+          'effect-set-config' + ele.effect_type + index
         )
         ext = JSON.parse(ele.ext)
         curEntityC.add(pe, ele.color, ele.radius, ele.duration, false, ext.waveCount)
@@ -62,14 +62,14 @@ class Manager {
       case 'HexagonSpread':
         curEntityC = new HexagonSpread(
           this.viewer,
-          'effect-set-config' + ele.effect_type
+          'effect-set-config' + ele.effect_type + index
         )
         curEntityC.add(pe, ele.color, ele.radius, ele.duration)
         break
       case 'CircleScan':
         curEntityC = new RaderScan(
           this.viewer,
-          'effect-set-config' + ele.effect_type
+          'effect-set-config' + ele.effect_type + index
         )
         ext = JSON.parse(ele.ext)
         curEntityC.add(pe, ele.color, ele.radius, ext.step)
@@ -77,7 +77,7 @@ class Manager {
       case 'SpreadWall':
         curEntityC = new SpreadWall(
           this.viewer,
-          'effect-set-config' + ele.effect_type
+          'effect-set-config' + ele.effect_type + index
         )
         ext = JSON.parse(ele.ext)
         curEntityC.add(
