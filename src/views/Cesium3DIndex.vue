@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-06-17 15:13:58
  * @LastEditors: Hawk
- * @LastEditTime: 2021-09-28 16:30:47
+ * @LastEditTime: 2021-10-12 16:26:43
 -->
 <template>
   <div class="Cesium3DIndex" id="cesiumContainer"></div>
@@ -19,14 +19,16 @@ import ShowLngLat from '@/components/ShowLngLat.vue' // @ is an alias to /src
 import ButtonTools from '@/components/ButtonTools.vue'
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import Manager from '@/utils/ctrlCesium/effects/Manager'
+import Primitive from '@/utils/ctrlCesium/model/Primitive'
 import RoadNetwork from '@/utils/ctrlCesium/lines/RoadNetwork'
 import { defineComponent, onBeforeMount, nextTick, ref } from 'vue'
+declare const Cesium: any
 
 export default defineComponent({
   name: 'Cesium3DIndex',
   components: { ShowLngLat, ButtonTools },
   setup() {
-    let viewer = ref<any>()
+    let viewer = null
     const ShowLngLatRef = ref()
     const ButtonToolsRef = ref()
 
@@ -44,12 +46,35 @@ export default defineComponent({
 
       // 处理 配置好的点效果列表
       const GManager = new Manager(viewer)
-      GManager.init()
+      // GManager.init()
 
       // 公路效果
       const GRoadNetwork = new RoadNetwork(viewer, 'road')
-      GRoadNetwork.init()
+      // GRoadNetwork.init()
 
+      // 这里来一个锥子
+      const primitives = new Primitive(viewer)
+      let points = [
+        {
+          lon: 113.9318,
+          lat: 22.5206,
+          height: 100,
+          heading: 0,
+          pitch: 0,
+          roll: 0,
+          uri: 'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/model/pyramid.glb',
+          // uri: 'https://a.amap.com/jsapi_demos/static/gltf-online/shanghai/scene.gltf',
+          scale: 100, // 3580
+          rotate: 1, // 转速 1
+          modelColor: 'rgba(0,255,0,0.8)',
+          minimumPixelSize: 20 // 模型最小以多少像素显示
+        },
+      ]
+      let options = {
+        modelColor: 'rgba(0,255,0,0.8)',
+        minimumPixelSize: 20 // 模型最小以多少像素显示
+      }
+      let modelCollection = primitives.showModels(points, options)
     }
     onBeforeMount(() => {
       nextTick(async () => {
@@ -59,7 +84,7 @@ export default defineComponent({
       })
     })
     return {
-      viewer, ShowLngLatRef, ButtonToolsRef
+      ShowLngLatRef, ButtonToolsRef
     }
   },
 })
