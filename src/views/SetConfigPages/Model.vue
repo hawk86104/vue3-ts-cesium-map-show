@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-10-13 09:26:38
  * @LastEditors: Hawk
- * @LastEditTime: 2021-10-13 15:07:39
+ * @LastEditTime: 2021-10-13 15:53:13
 -->
 <template>
   <CesiumContainer @update:onReadyMap="onReadyMap">
@@ -23,8 +23,14 @@
               </el-radio-group><br><br>
               <span class='c_title'>旋转延迟：{{duration}} 毫秒</span>
               <el-slider v-model="duration" :min="0" :max="100" :step="1" @input="duration_change"></el-slider><br>
+              <span class='c_title'>转速{{rotate}} </span>
+              <el-slider v-model="rotate" :min="1" :max="20" :step="1" @input="rotate_change"></el-slider><br>
               <span class='c_title'>高度：{{height}} 米</span>
               <el-slider v-model="height" :min="0" :max="1000" :step="20" @input="height_change"></el-slider><br><br>
+              <span class='c_title'>大小：{{scale}} 倍</span>
+              <el-slider v-model="scale" :min="1" :max="1000" :step="10" @input="scale_change"></el-slider><br>
+              <span class='c_title'>最小显示：{{minimumPixelSize}} 像素</span>
+              <el-slider v-model="minimumPixelSize" :min="1" :max="800" :step="10" @input="minimumPixelSize_change"></el-slider><br>
             </div>
           </template>
         </PannelBox>
@@ -57,6 +63,12 @@ export default defineComponent({
     duration.value = getUrlParma('duration') ? getUrlParma('duration') : duration.value
     const height = ref(100)
     height.value = getUrlParma('height') ? getUrlParma('height') : height.value
+    const scale = ref(100)
+    scale.value = getUrlParma('scale') ? getUrlParma('scale') : scale.value
+    const rotate = ref(1)
+    rotate.value = getUrlParma('rotate') ? getUrlParma('rotate') : rotate.value
+    const minimumPixelSize = ref(21)
+    minimumPixelSize.value = getUrlParma('minimumPixelSize') ? getUrlParma('minimumPixelSize') : minimumPixelSize.value
     
     let primitives = null
     const change_color = (val: string) => {
@@ -66,6 +78,11 @@ export default defineComponent({
       }
       if (primitives && window.Gviewer.entities) {
         primitives.changePrimitiveColor(IdModel, val)
+      }
+    }
+    const rotate_change = (val: string) => {
+      if (primitives && window.Gviewer.entities) {
+        primitives.changePrimitiveRotate(IdModel, val)
       }
     }
     const change_colorMode = (val: string) => {
@@ -83,6 +100,16 @@ export default defineComponent({
         primitives.changePrimitiveHeight(IdModel, val)
       }
     }
+    const scale_change = (val: number) => {
+      if (primitives && window.Gviewer.entities) {
+        primitives.changePrimitiveScale(IdModel, val)
+      }
+    }
+    const minimumPixelSize_change = (val: number) => {
+      if (primitives && window.Gviewer.entities) {
+        primitives.changePrimitiveMinimumPixelSize(IdModel, val)
+      }
+    }
     
     const onReadyMap = () => {
       // 载入默认白膜
@@ -90,7 +117,8 @@ export default defineComponent({
       GTitleset.init()
 
       primitives = new Primitive(window.Gviewer)
-      let points = [
+      primitives.addMouseEvent()
+      let points =
         {
           id: IdModel,
           lon: 113.9318,
@@ -102,18 +130,17 @@ export default defineComponent({
           colorMode: colorMode.value,
           uri: 'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/model/pyramid.glb',
           // uri: 'https://a.amap.com/jsapi_demos/static/gltf-online/shanghai/scene.gltf',
-          scale: 100, // 3580
-          rotate: 1, // 转速 1
+          scale: scale.value, // 3580
+          rotate: rotate.value, // 转速
           modelColor: color.value,
-          minimumPixelSize: 20, // 模型最小以多少像素显示
+          minimumPixelSize: minimumPixelSize.value, // 模型最小以多少像素显示
           duration: duration.value
-        },
-      ]
+        }
       let options = {}
       primitives.showModels(points, options)
     }
     return {
-      onReadyMap, change_color, color, colorMode, change_colorMode, duration_change, duration, height_change, height
+      onReadyMap, change_color, color, colorMode, change_colorMode, duration_change, duration, height_change, height, scale_change, scale, rotate_change, rotate, minimumPixelSize, minimumPixelSize_change
     }
   },
 })
