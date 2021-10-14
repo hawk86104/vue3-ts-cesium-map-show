@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-10-13 09:26:38
  * @LastEditors: Hawk
- * @LastEditTime: 2021-10-13 15:53:13
+ * @LastEditTime: 2021-10-14 10:40:13
 -->
 <template>
   <CesiumContainer @update:onReadyMap="onReadyMap">
@@ -25,12 +25,18 @@
               <el-slider v-model="duration" :min="0" :max="100" :step="1" @input="duration_change"></el-slider><br>
               <span class='c_title'>转速{{rotate}} </span>
               <el-slider v-model="rotate" :min="1" :max="20" :step="1" @input="rotate_change"></el-slider><br>
+              <el-button @click="goToCenter" style="float: right;" size="mini">移动到屏幕中心</el-button><br>
+              <span class='c_title'>lon经度：</span>
+              <el-input class="input_c_p" type="number" size="small" v-model="positionLon" @change="position_change"></el-input><br>
+              <span class='c_title'>lat纬度：</span>
+              <el-input class="input_c_p" type="number" size="small" v-model="positionLat" @change="position_change"></el-input><br><br>
               <span class='c_title'>高度：{{height}} 米</span>
               <el-slider v-model="height" :min="0" :max="1000" :step="20" @input="height_change"></el-slider><br><br>
               <span class='c_title'>大小：{{scale}} 倍</span>
               <el-slider v-model="scale" :min="1" :max="1000" :step="10" @input="scale_change"></el-slider><br>
               <span class='c_title'>最小显示：{{minimumPixelSize}} 像素</span>
               <el-slider v-model="minimumPixelSize" :min="1" :max="800" :step="10" @input="minimumPixelSize_change"></el-slider><br>
+              <el-button @click="save" size="mini">保存当前设置</el-button>
             </div>
           </template>
         </PannelBox>
@@ -41,6 +47,7 @@
 
 <script lang="ts">
 /* eslint-disable no-debugger */
+import { GController } from '@/utils/ctrlCesium/Controller'
 import CesiumContainer from '@/components/CesiumContainer.vue'
 import PannelBox from '@/components/PannelBox.vue'
 import { getUrlParma } from '@/utils/common'
@@ -61,6 +68,10 @@ export default defineComponent({
     colorMode.value = getUrlParma('colorMode') ? getUrlParma('colorMode') : colorMode.value
     const duration = ref(20)
     duration.value = getUrlParma('duration') ? getUrlParma('duration') : duration.value
+    const positionLon = ref('113.9318')
+    positionLon.value = getUrlParma('positionLon') ? getUrlParma('positionLon') : positionLon.value
+    const positionLat = ref('22.5206')
+    positionLat.value = getUrlParma('positionLat') ? getUrlParma('positionLat') : positionLat.value
     const height = ref(100)
     height.value = getUrlParma('height') ? getUrlParma('height') : height.value
     const scale = ref(100)
@@ -110,7 +121,25 @@ export default defineComponent({
         primitives.changePrimitiveMinimumPixelSize(IdModel, val)
       }
     }
-    
+    const position_change = () => {
+      if (primitives && window.Gviewer.entities) {
+        primitives.changePrimitivePosition(IdModel, parseFloat(positionLon.value), parseFloat(positionLat.value))
+      }
+    }
+    const update_position = (ob: any) => {
+      positionLon.value = ob.lon
+      positionLat.value = ob.lat
+    }
+    const save = () => {
+      // 
+    }
+    const goToCenter = () => {
+      if (primitives && window.Gviewer.entities) {
+        let ob = GController.getCurCenterlonLat(window.Gviewer)
+        primitives.changePrimitivePosition(IdModel, ob.lon, ob.lat)
+        update_position(ob)
+      }
+    }
     const onReadyMap = () => {
       // 载入默认白膜
       const GTitleset = new Titleset(window.Gviewer)
@@ -118,11 +147,12 @@ export default defineComponent({
 
       primitives = new Primitive(window.Gviewer)
       primitives.addMouseEvent()
+      primitives.update_position = update_position
       let points =
         {
           id: IdModel,
-          lon: 113.9318,
-          lat: 22.5206,
+          lon: parseFloat(positionLon.value),
+          lat: parseFloat(positionLat.value),
           height: height.value,
           heading: 0,
           pitch: 0,
@@ -140,7 +170,8 @@ export default defineComponent({
       primitives.showModels(points, options)
     }
     return {
-      onReadyMap, change_color, color, colorMode, change_colorMode, duration_change, duration, height_change, height, scale_change, scale, rotate_change, rotate, minimumPixelSize, minimumPixelSize_change
+      onReadyMap, change_color, color, colorMode, change_colorMode, duration_change, duration, height_change, height, scale_change,
+      scale, rotate_change, rotate, minimumPixelSize, minimumPixelSize_change, positionLon, positionLat, position_change, goToCenter, save
     }
   },
 })

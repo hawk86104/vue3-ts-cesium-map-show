@@ -5,18 +5,20 @@
  * @Autor: Hawk
  * @Date: 2021-10-12 09:24:13
  * @LastEditors: Hawk
- * @LastEditTime: 2021-10-13 16:23:52
+ * @LastEditTime: 2021-10-14 09:36:01
  */
 class PrimitiveController {
   viewer: any
   pointDraged: any
   leftDownFlag: boolean
   id: string
+  update_position: any
   constructor(viewer: any) {
     this.viewer = viewer
     this.pointDraged = null
     this.leftDownFlag = false
     this.id = ''
+    this.update_position = null
   }
   addMouseEvent() {
     const _this = this
@@ -43,7 +45,6 @@ class PrimitiveController {
       ) {
         const ray = _this.viewer.camera.getPickRay(e.endPosition)
         const cartesian = _this.viewer.scene.globe.pick(ray, _this.viewer.scene)
-        debugger
         // _this.pointDraged.id.position = cartesian // 此处根据具体entity来处理，也可能是pointDraged.id.position=cartesian;
         // 这里笛卡尔坐标转 经纬度
         const ellipsoid = _this.viewer.scene.globe.ellipsoid
@@ -52,6 +53,9 @@ class PrimitiveController {
         const lng = Cesium.Math.toDegrees(cartographic.longitude)
         _this.pointDraged.primitive.attributes.lon = lng
         _this.pointDraged.primitive.attributes.lat = lat
+        if (_this.update_position) {
+          _this.update_position({lon: lng.toFixed(8), lat: lat.toFixed(8)})
+        }
       }
     }
     this.viewer.screenSpaceEventHandler.setInputAction(
@@ -148,6 +152,13 @@ class PrimitiveController {
     let primitive = this.findPrimitiveById(id)
     if (primitive) {
       primitive.attributes.height = height
+    }
+  }
+  changePrimitivePosition(id: string, positionLon: number, positionLat: number) {
+    let primitive = this.findPrimitiveById(id)
+    if (primitive) {
+      primitive.attributes.lon = positionLon
+      primitive.attributes.lat = positionLat
     }
   }
   changePrimitiveScale(id: string, scale: number) {

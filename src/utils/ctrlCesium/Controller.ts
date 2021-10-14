@@ -163,6 +163,22 @@ class Controller {
       }
     }
   }
+  // 获取当前视图的中心经纬度
+  getCurCenterlonLat(viewer: any) {
+    let result = viewer.camera.pickEllipsoid(
+      new Cesium.Cartesian2(
+        viewer.canvas.clientWidth / 2,
+        viewer.canvas.clientHeight / 2,
+      ),
+    )
+    let curPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(result)
+    let lon = (curPosition.longitude * 180) / Math.PI
+    let lat = (curPosition.latitude * 180) / Math.PI
+    return {
+      lon: lon,
+      lat: lat
+    }
+  }
 }
 
 export const GController = new Controller()
