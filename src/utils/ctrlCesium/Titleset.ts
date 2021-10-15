@@ -82,7 +82,14 @@ class Titleset {
         url: ele.url,
         shadows: 4,
         maximumScreenSpaceError: 1, // Temporary workaround for low memory mobile devices - Increase maximum error to 8.
-        maximumNumberOfLoadedTiles: 1000 // Temporary workaround for low memory mobile devices - Decrease (disable) tile cache.
+        maximumNumberOfLoadedTiles: 1000, // Temporary workaround for low memory mobile devices - Decrease (disable) tile cache.
+        // debugShowBoundingVolume: true,
+        // debugColorizeTiles: true,
+        // debugShowUrl: true,
+        // debugShowContentBoundingVolume: true,
+        // debugShowViewerRequestVolume: true,
+        // debugShowRenderingStatistics: true,
+        // debugShowMemoryUsage: true,
       })
     )
     modalOne.readyPromise.then(function(tileset: any) {
@@ -134,7 +141,12 @@ class Titleset {
               vec4 position = czm_inverseModelView * vec4(v_positionEC,1); // 位置
               float glowRange = ${ele.height.toFixed(2)}; // 光环的移动范围(高度)
               gl_FragColor = vec4(${effect_color[0]}, ${effect_color[1]}, ${effect_color[2]}, 1.0); // 颜色
-              gl_FragColor *= vec4(vec3(position.z / 100.0), 1.0); // 渐变
+              // 底楼 亮度太暗了，那么把20%以内的底楼，都不再变暗
+              if((position.z / 100.0) < 0.2) {
+                gl_FragColor *= vec4(vec3(position.z / 100.0 * 2.0), 1.0);
+              }else{
+                gl_FragColor *= vec4(vec3(position.z / 100.0), 1.0); // 渐变
+              }
               // 动态光环
               float time = fract(czm_frameNumber / 360.0);
               time = abs(time - 0.5) * 2.0;

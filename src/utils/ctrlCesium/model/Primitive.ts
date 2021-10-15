@@ -5,7 +5,7 @@
  * @Autor: Hawk
  * @Date: 2021-10-12 09:24:13
  * @LastEditors: Hawk
- * @LastEditTime: 2021-10-14 09:36:01
+ * @LastEditTime: 2021-10-15 13:52:51
  */
 class PrimitiveController {
   viewer: any
@@ -19,6 +19,17 @@ class PrimitiveController {
     this.leftDownFlag = false
     this.id = ''
     this.update_position = null
+  }
+  removeMouseEvent() {
+    this.viewer.screenSpaceEventHandler.removeInputAction(
+      Cesium.ScreenSpaceEventType.LEFT_DOWN
+    )
+    this.viewer.screenSpaceEventHandler.removeInputAction(
+      Cesium.ScreenSpaceEventType.LEFT_UP
+    )
+    this.viewer.screenSpaceEventHandler.removeInputAction(
+      Cesium.ScreenSpaceEventType.MOUSE_MOVE
+    )
   }
   addMouseEvent() {
     const _this = this
@@ -131,15 +142,16 @@ class PrimitiveController {
     if (primitive) {
       if (primitive.setIntervalId) clearInterval(primitive.setIntervalId)
       const setIntervalId = setInterval(() => {
+        primitive.heading += Cesium.Math.toRadians(primitive.attributes.rotateSpeed || 0)
         primitive.modelMatrix = _this._changeModelMatrix(primitive)
       }, time)
       primitive.setIntervalId = setIntervalId // 用于清除定时器
     }
   }
-  changePrimitiveRotate(id: string, rotate: number) {
+  changePrimitiverotateSpeed(id: string, rotateSpeed: number) {
     let primitive = this.findPrimitiveById(id)
     if (primitive) {
-      primitive.attributes.rotate = rotate
+      primitive.attributes.rotateSpeed = rotateSpeed
     }
   }
   changePrimitiveMinimumPixelSize(id: string, minimumPixelSize: number) {
@@ -159,6 +171,14 @@ class PrimitiveController {
     if (primitive) {
       primitive.attributes.lon = positionLon
       primitive.attributes.lat = positionLat
+    }
+  }
+  changePrimitiveLatRotation(id: string, LatRotation: number) {
+    let primitive = this.findPrimitiveById(id)
+    if (primitive) {
+      primitive.attributes.heading = LatRotation
+      primitive.heading = LatRotation
+      primitive.modelMatrix = this._changeModelMatrix(primitive)
     }
   }
   changePrimitiveScale(id: string, scale: number) {
@@ -218,7 +238,7 @@ class PrimitiveController {
     }
   }
   _changeModelMatrix(model: any) {
-    model.heading += Cesium.Math.toRadians(model.attributes.rotate || 0)
+    // model.heading += Cesium.Math.toRadians(model.attributes.rotateSpeed || 0)
     const pitch = Cesium.defaultValue(model.attributes.pitch, 0.0)
     const roll = Cesium.defaultValue(model.attributes.roll, 0.0)
     const hpr = new Cesium.HeadingPitchRoll(model.heading, pitch, roll)
@@ -291,6 +311,7 @@ class Primitives extends PrimitiveController {
     model.heading = value.heading
     model.readyPromise.then(function(model: any) {
       const setIntervalId = setInterval(() => {
+        model.heading += Cesium.Math.toRadians(model.attributes.rotateSpeed || 0)
         model.modelMatrix = _this._changeModelMatrix(model)
       }, value.duration)
       model.setIntervalId = setIntervalId // 用于清除定时器
