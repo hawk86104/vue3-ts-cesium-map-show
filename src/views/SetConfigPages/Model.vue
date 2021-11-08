@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-10-13 09:26:38
  * @LastEditors: Hawk
- * @LastEditTime: 2021-10-15 14:04:25
+ * @LastEditTime: 2021-10-15 16:03:50
 -->
 <template>
   <CesiumContainer @update:onReadyMap="onReadyMap">
@@ -23,7 +23,7 @@
               </el-radio-group><br><br>
               <span class='c_title'>旋转延迟：{{duration}} 毫秒</span>
               <el-slider v-model="duration" :min="0" :max="100" :step="1" @input="duration_change"></el-slider><br>
-              <span class='c_title'>转速{{rotateSpeed}} </span>
+              <span class='c_title'>转速：{{rotateSpeed}} </span>
               <el-slider v-model="rotateSpeed" :min="0" :max="20" :step="1" @input="rotateSpeed_change"></el-slider><br>
               <span class='c_title'>旋转(横向)：{{LatRotation}} °</span>
               <el-slider v-model="LatRotation" :min="0" :max="7" :step="0.02" @input="LatRotation_change"></el-slider><br><br>
