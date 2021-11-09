@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-10-13 09:26:38
  * @LastEditors: Hawk
- * @LastEditTime: 2021-10-15 16:03:50
+ * @LastEditTime: 2021-11-09 09:56:40
 -->
 <template>
   <CesiumContainer @update:onReadyMap="onReadyMap">
@@ -55,6 +55,7 @@ import { GController } from '@/utils/ctrlCesium/Controller'
 import CesiumContainer from '@/components/CesiumContainer.vue'
 import PannelBox from '@/components/PannelBox.vue'
 import { getUrlParma } from '@/utils/common'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
 import Titleset from '@/utils/ctrlCesium/Titleset'
 import Primitive from '@/utils/ctrlCesium/model/Primitive'
@@ -68,22 +69,23 @@ export default defineComponent({
     const IdModel = 'pimitiveModelConfig'
     const color = ref('rgba(255, 255, 255, 1)')
     color.value = getUrlParma('color') ? getUrlParma('color') : color.value
+    const url = getUrlParma('url') ? decodeURI(getUrlParma('url')) : 'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/model/pyramid.glb'
     const colorMode = ref('HIGHLIGHT')
     colorMode.value = getUrlParma('colorMode') ? getUrlParma('colorMode') : colorMode.value
     const duration = ref(20)
-    duration.value = getUrlParma('duration') ? getUrlParma('duration') : duration.value
+    duration.value = parseFloat(getUrlParma('duration') ? getUrlParma('duration') : duration.value)
     const positionLon = ref('121.51568329')
     positionLon.value = getUrlParma('positionLon') ? getUrlParma('positionLon') : positionLon.value
     const positionLat = ref('31.22982201')
     positionLat.value = getUrlParma('positionLat') ? getUrlParma('positionLat') : positionLat.value
     const height = ref(240)
-    height.value = getUrlParma('height') ? getUrlParma('height') : height.value
+    height.value = parseFloat(getUrlParma('height') ? getUrlParma('height') : height.value)
     const scale = ref(641)
-    scale.value = getUrlParma('scale') ? getUrlParma('scale') : scale.value
+    scale.value = parseFloat(getUrlParma('scale') ? getUrlParma('scale') : scale.value)
     const rotateSpeed = ref(0)
-    rotateSpeed.value = getUrlParma('rotateSpeed') ? getUrlParma('rotateSpeed') : rotateSpeed.value
+    rotateSpeed.value = parseFloat(getUrlParma('rotateSpeed') ? getUrlParma('rotateSpeed') : rotateSpeed.value)
     const minimumPixelSize = ref(21)
-    minimumPixelSize.value = getUrlParma('minimumPixelSize') ? getUrlParma('minimumPixelSize') : minimumPixelSize.value
+    minimumPixelSize.value = parseFloat(getUrlParma('minimumPixelSize') ? getUrlParma('minimumPixelSize') : minimumPixelSize.value)
     const ModelCanMove = ref(false)
     
     let primitives = null
@@ -117,7 +119,7 @@ export default defineComponent({
       }
     }
     const LatRotation = ref(3.76)
-    LatRotation.value = getUrlParma('LatRotation') ? getUrlParma('LatRotation') : LatRotation.value
+    LatRotation.value = parseFloat(getUrlParma('LatRotation') ? getUrlParma('LatRotation') : LatRotation.value)
     const LatRotation_change = (val: number) => {
       if (primitives && window.Gviewer.entities) {
         primitives.changePrimitiveLatRotation(IdModel, val)
@@ -153,7 +155,33 @@ export default defineComponent({
       positionLat.value = ob.lat
     }
     const save = () => {
-      // 
+      ElMessageBox.confirm('提交保存当前效果配置信息, 是否继续?', '提示', {
+        confirmButtonText: '保存',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
+          let postData = {
+            color: color.value,
+            colorMode: colorMode.value,
+            duration: duration.value,
+            rotateSpeed: rotateSpeed.value,
+            LatRotation: LatRotation.value,
+            positionLon: positionLon.value,
+            positionLat: positionLat.value,
+            height: height.value,
+            scale: scale.value,
+            minimumPixelSize: minimumPixelSize.value
+          }
+          window.parent.postMessage(postData, '*')
+          ElMessage({
+            type: 'success',
+            message: '保存成功!',
+          })
+        })
+        .catch((e:any ) => {
+          console.log(e)
+        })
     }
     const goToCenter = () => {
       if (primitives && window.Gviewer.entities) {
@@ -179,8 +207,8 @@ export default defineComponent({
           pitch: 0,
           roll: 0,
           colorMode: colorMode.value,
-          // uri: 'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/model/pyramid.glb',
-          uri: 'https://a.amap.com/jsapi_demos/static/gltf-online/shanghai/scene.gltf',
+          // uri: 'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/model/pyramid.glb', // https://a.amap.com/jsapi_demos/static/gltf-online/shanghai/scene.gltf 
+          uri: url,
           scale: scale.value, // 3580
           rotateSpeed: rotateSpeed.value, // 转速
           modelColor: color.value,
