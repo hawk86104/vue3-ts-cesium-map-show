@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-10-13 09:26:38
  * @LastEditors: Hawk
- * @LastEditTime: 2021-11-09 09:56:40
+ * @LastEditTime: 2021-11-10 14:03:15
 -->
 <template>
   <CesiumContainer @update:onReadyMap="onReadyMap">
@@ -35,9 +35,10 @@
               <span class='c_title'>lat纬度：</span>
               <el-input class="input_c_p" type="number" size="small" v-model="positionLat" @change="position_change"></el-input><br><br>
               <span class='c_title'>高度：{{height}} 米</span>
-              <el-slider v-model="height" :min="0" :max="1000" :step="20" @input="height_change"></el-slider><br><br>
+              <el-slider v-model="height" :min="0" :max="1000" :step="20" @input="height_change"></el-slider><br>
               <span class='c_title'>大小：{{scale}} 倍</span>
-              <el-slider v-model="scale" :min="1" :max="1000" :step="10" @input="scale_change"></el-slider><br>
+              <el-input class="input_c_p" type="number" size="small" v-model="scale" @change="scale_change"></el-input><br><br>
+              <!-- <el-slider v-model="scale" :min="0.001" :max="100" :step="0.01" @input="scale_change"></el-slider><br> -->
               <span class='c_title'>最小显示：{{minimumPixelSize}} 像素</span>
               <el-slider v-model="minimumPixelSize" :min="1" :max="800" :step="10" @input="minimumPixelSize_change"></el-slider><br>
               <el-button @click="save" size="mini">保存当前设置</el-button>

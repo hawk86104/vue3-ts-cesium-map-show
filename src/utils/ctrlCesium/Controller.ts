@@ -46,6 +46,9 @@ class Controller {
       homeButton: true, // 是否显示首页按钮
       geocoder: false, // 默认不显示搜索栏地址
       sceneModePicker: true, // 是否显示视角切换按钮
+
+      // useDefaultRenderLoop: true, // 如果需要控制渲染循环，则设为true  
+      // targetFrameRate: 60, // 使用默认render loop时的帧率  
     }
     vConfig = Object.assign(vConfig, BaseMapConfig) // 后台接口配置 融合替换 默认配置
     const viewer = new Cesium.Viewer(mapID, vConfig)
@@ -55,6 +58,10 @@ class Controller {
     }
     // 设置开启深度检测
     viewer.scene.globe.depthTestAgainstTerrain = true
+
+    // 显示 fps
+    // viewer.scene.debugShowFramesPerSecond = true
+
     // 初始化 cesium-navigation 控件
     this.initCesiumNavigation(viewer)
 

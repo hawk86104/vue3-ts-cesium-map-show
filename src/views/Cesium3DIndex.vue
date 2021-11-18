@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-06-17 15:13:58
  * @LastEditors: Hawk
- * @LastEditTime: 2021-10-12 16:26:43
+ * @LastEditTime: 2021-11-10 15:13:18
 -->
 <template>
   <div class="Cesium3DIndex" id="cesiumContainer"></div>
@@ -44,37 +44,18 @@ export default defineComponent({
       const GTitleset = new Titleset(viewer)
       GTitleset.init()
 
+      // 模型List
+      const GPrimitive = new Primitive(viewer)
+      GPrimitive.init()
+
       // 处理 配置好的点效果列表
       const GManager = new Manager(viewer)
-      // GManager.init()
+      GManager.init()
 
       // 公路效果
       const GRoadNetwork = new RoadNetwork(viewer, 'road')
-      // GRoadNetwork.init()
+      GRoadNetwork.init()
 
-      // 这里来一个锥子
-      const primitives = new Primitive(viewer)
-      let points = [
-        {
-          lon: 113.9318,
-          lat: 22.5206,
-          height: 100,
-          heading: 0,
-          pitch: 0,
-          roll: 0,
-          uri: 'https://mapv-data.oss-cn-hangzhou.aliyuncs.com/model/pyramid.glb',
-          // uri: 'https://a.amap.com/jsapi_demos/static/gltf-online/shanghai/scene.gltf',
-          scale: 100, // 3580
-          rotate: 1, // 转速 1
-          modelColor: 'rgba(0,255,0,0.8)',
-          minimumPixelSize: 20 // 模型最小以多少像素显示
-        },
-      ]
-      let options = {
-        modelColor: 'rgba(0,255,0,0.8)',
-        minimumPixelSize: 20 // 模型最小以多少像素显示
-      }
-      let modelCollection = primitives.showModels(points, options)
     }
     onBeforeMount(() => {
       nextTick(async () => {

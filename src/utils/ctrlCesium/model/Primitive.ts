@@ -5,7 +5,7 @@
  * @Autor: Hawk
  * @Date: 2021-10-12 09:24:13
  * @LastEditors: Hawk
- * @LastEditTime: 2021-10-15 13:52:51
+ * @LastEditTime: 2021-11-10 16:02:00
  */
 class PrimitiveController {
   viewer: any
@@ -13,12 +13,14 @@ class PrimitiveController {
   leftDownFlag: boolean
   id: string
   update_position: any
+  modelList: any
   constructor(viewer: any) {
     this.viewer = viewer
     this.pointDraged = null
     this.leftDownFlag = false
     this.id = ''
     this.update_position = null
+    this.modelList = []
   }
   removeMouseEvent() {
     this.viewer.screenSpaceEventHandler.removeInputAction(
@@ -255,7 +257,7 @@ class PrimitiveController {
     return modelMatrix
   }
 }
-
+import { getPrimitivesList } from '@/api/model'
 /**
  * primitive要素类
  */
@@ -263,7 +265,33 @@ class Primitives extends PrimitiveController {
   constructor(viewer: any) {
     super(viewer)
   }
-
+  async init() {
+    const res: any = await getPrimitivesList()
+    const _this = this
+    if (res.data) {
+      res.data.forEach((element: any, index: number) => {
+        let points =
+        {
+          id: 'pimitiveModelList' + element.id,
+          lon: element.positionLon,
+          lat: element.positionLat,
+          height: element.height,
+          heading: element.latRotation,
+          pitch: 0,
+          roll: 0,
+          colorMode: element.colorModelist,
+          uri: element.url,
+          scale: element.scale,
+          rotateSpeed: element.rotateSpeed, // 转速
+          modelColor: element.color,
+          minimumPixelSize: element.minimumPixelSize, // 模型最小以多少像素显示
+          duration: element.duration
+        }
+        let options = {}
+        _this.modelList.push(_this.showModels(points, options))
+      })
+    }
+  }
   /**
    * 添加模型
    * @param {*} points 点集
@@ -304,6 +332,8 @@ class Primitives extends PrimitiveController {
         colorBlendMode: Cesium.ColorBlendMode.MIX,
         maximumScale: 5000,
         minimumPixelSize: value.minimumPixelSize || 20,
+        scene: _this.viewer.scene,
+        heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
       })
     )
     this.changePrimitiveColorBlendMode(id, value.colorMode)
