@@ -4,7 +4,7 @@
  * @Autor: Hawk
  * @Date: 2021-06-17 15:09:27
  * @LastEditors: Hawk
- * @LastEditTime: 2021-11-22 18:38:41
+ * @LastEditTime: 2022-01-07 11:48:02
 -->
 # vue3-typescript-cesium-elementPlus
 
@@ -21,9 +21,10 @@ http://map.217dan.com/aeSAZtOfuN.php
 vue3.0 CLI4.x脚手架搭建，使用typescript作为逻辑代码，UI界面为elementPlus
 GIS地图部分，使用Cesium-1.82开源库，简单了修改了地图展示部分代码
 加入了主流的一些WebGL动态效果类
-配合后台【thinphp + mysql】
+配合后台【thinkphp + mysql】
 
-后台源码随后加入
+后台源码地址：
+https://gitee.com/hawk86104/vue3-ts-cesium-map-show-backend
 
 ## 截图展示
 ![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/index.png)
