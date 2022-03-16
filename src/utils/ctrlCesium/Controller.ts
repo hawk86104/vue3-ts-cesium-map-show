@@ -47,8 +47,8 @@ class Controller {
       geocoder: false, // 默认不显示搜索栏地址
       sceneModePicker: true, // 是否显示视角切换按钮
 
-      // useDefaultRenderLoop: true, // 如果需要控制渲染循环，则设为true  
-      // targetFrameRate: 60, // 使用默认render loop时的帧率  
+      // useDefaultRenderLoop: true, // 如果需要控制渲染循环，则设为true
+      // targetFrameRate: 60, // 使用默认render loop时的帧率
     }
     vConfig = Object.assign(vConfig, BaseMapConfig) // 后台接口配置 融合替换 默认配置
     const viewer = new Cesium.Viewer(mapID, vConfig)
@@ -127,13 +127,18 @@ class Controller {
             parseFloat(offset[0]),
             parseFloat(offset[1]),
           ]
-          baseLayer._imageryProvider._tilingScheme._rectangleNortheastInMeters.x += oxy[0]
-          baseLayer._imageryProvider._tilingScheme._rectangleNortheastInMeters.y += oxy[1]
+          baseLayer._imageryProvider._tilingScheme._rectangleNortheastInMeters.x +=
+            oxy[0]
+          baseLayer._imageryProvider._tilingScheme._rectangleNortheastInMeters.y +=
+            oxy[1]
         }
         catch (error) {
           console.log(error)
         }
       }
+
+      // 更改cesium的着色器代码 关于滤镜和反色的 [在不更改cesium源文件的情况下]
+      this.changeImageryProviderColors(viewer, baseLayer)
     })
   }
   // 消除锯齿
@@ -151,17 +156,28 @@ class Controller {
     }
   }
   // 更改 cesium 着色的方法
-  changeImageryProviderColors(viewer: any) {
+  changeImageryProviderColors(viewer: any, baseLayer: any) {
     // 更改底图的着色器 代码
     const baseFragmentShaderSource =
       viewer.scene.globe._surfaceShaderSet.baseFragmentShaderSource.sources
     for (let i = 0; i < baseFragmentShaderSource.length; i++) {
       const oneSource = baseFragmentShaderSource[i]
       // 格式必须一致 不能多有空格 且保持版本一致性
-      const strS = 'gl_FragColor = finalColor;\n\
-}\n\
-#ifdef GROUND_ATMOSPHERE\n'
-      const strT = strS
+      const strS = 'color = czm_saturation(color, textureSaturation);\n#endif\n'
+      let strT = 'color = czm_saturation(color, textureSaturation);\n#endif\n'
+      if (baseLayer.invertColor) {
+        strT += `
+          color.r = 1.0 - color.r;
+          color.g = 1.0 - color.g;
+          color.b = 1.0 - color.b;
+        `
+        strT += `
+        color.r = color.r * ${baseLayer.filterRGB[0]}.0/255.0;
+        color.g = color.g * ${baseLayer.filterRGB[1]}.0/255.0;
+        color.b = color.b * ${baseLayer.filterRGB[2]}.0/255.0;
+        `
+      }
+
       if (oneSource.indexOf(strS) !== -1) {
         baseFragmentShaderSource[i] = baseFragmentShaderSource[i].replace(
           strS,
@@ -175,15 +191,15 @@ class Controller {
     let result = viewer.camera.pickEllipsoid(
       new Cesium.Cartesian2(
         viewer.canvas.clientWidth / 2,
-        viewer.canvas.clientHeight / 2,
-      ),
+        viewer.canvas.clientHeight / 2
+      )
     )
     let curPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(result)
     let lon = (curPosition.longitude * 180) / Math.PI
     let lat = (curPosition.latitude * 180) / Math.PI
     return {
       lon: lon,
-      lat: lat
+      lat: lat,
     }
   }
 }
