@@ -37,14 +37,15 @@ https://gitee.com/hawk86104/vue3-ts-cesium-map-show-backend
 ![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/pointeffect.gif)
 ![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/titleset.gif)
 
-## Project setup
+## 安装依赖
 npm install
 
-### Compiles and hot-reloads for development
+### 调试模式
 npm run serve
 
-### Compiles and minifies for production
+### 编译
 npm run build
 
-### Lints and fixes files
-npm run lint
+## 学习交流平台
+最近和ice.gl搭建了 冰哥图形学社区：专门为入门或者从事webgl开发和学习的朋友提供交流的平台。 http://www.icegl.cn/
+内含免费丰富的webgl课程、课程源码 以及shader文档等，还有社区问答，不懂的都可以在线提问。
