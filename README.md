@@ -47,5 +47,7 @@ npm run serve
 npm run build
 
 ## 学习交流平台
-最近和ice.gl搭建了 冰哥图形学社区：专门为入门或者从事webgl开发和学习的朋友提供交流的平台。 http://www.icegl.cn/
+最近和ice.gl搭建了 ICE图形学社区：专门为入门或者从事webgl开发和学习的朋友提供交流的平台。 
+https://www.icegl.cn/
+![展示](https://icegl-1314935952.cos.ap-beijing.myqcloud.com/uploads/20230421/QQ20230421-121209.png)
 内含免费丰富的webgl课程、课程源码 以及shader文档等，还有社区问答，不懂的都可以在线提问。
