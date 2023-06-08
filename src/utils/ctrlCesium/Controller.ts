@@ -67,6 +67,7 @@ class Controller {
 
     // 增加配置图层
     this.setConfigMapList(viewer, MapImageryList)
+
     // 消除锯齿
     this.removeJagged(viewer)
     this.viewer = viewer
@@ -105,20 +106,6 @@ class Controller {
     // 设置具体的 ImageryLayer 参数
     MapImageryList.some((elem: any, index: number) => {
       const baseLayer = viewer.imageryLayers.get(index)
-      if (elem.interfaceConfig) {
-        Object.getOwnPropertyNames(elem.interfaceConfig).forEach(function(
-          key
-        ) {
-          baseLayer[key] = elem.interfaceConfig[key]
-        })
-      }
-      // 设置 滤镜效果
-      baseLayer.invertColor = elem.invertswitch
-      baseLayer.filterRGB = [255.0, 255.0, 255.0]
-      if (elem.filterRGB !== '#000000' && elem.filterRGB !== '#ffffff') {
-        baseLayer.filterRGB = colorRgb(elem.filterRGB)
-      }
-
       // 设置 offset 偏移量
       const offset: Array<string> = elem.offset.split(',')
       if (offset.length === 2) {
@@ -136,7 +123,19 @@ class Controller {
           console.log(error)
         }
       }
-
+      if (elem.interfaceConfig) {
+        Object.getOwnPropertyNames(elem.interfaceConfig).forEach(function(
+          key
+        ) {
+          baseLayer[key] = elem.interfaceConfig[key]
+        })
+      }
+      // 设置 滤镜效果
+      baseLayer.invertColor = elem.invertswitch
+      baseLayer.filterRGB = [255.0, 255.0, 255.0]
+      if (elem.filterRGB !== '#000000' && elem.filterRGB !== '#ffffff') {
+        baseLayer.filterRGB = colorRgb(elem.filterRGB)
+      }
       // 更改cesium的着色器代码 关于滤镜和反色的 [在不更改cesium源文件的情况下]
       this.changeImageryProviderColors(viewer, baseLayer)
     })
