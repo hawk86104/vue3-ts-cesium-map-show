@@ -46,7 +46,13 @@ npm run serve
 ### 编译
 npm run build
 
-## 学习交流平台
+## 学习交流群
+欢迎大家也加入微信群，已有4个群已满，一起学习讨论webgl。加微信我拉进群
+
+<img src="https://icegl-1314935952.cos.ap-beijing.myqcloud.com/uploads/20230731/17d59bab46815cce1f4f1e09dcbb6ccc.png"  align = "left"  width="400" />
+
+
+## 学习交流社区
 最近和ice.gl搭建了 ICE图形学社区：专门为入门或者从事webgl开发和学习的朋友提供交流的平台。 
 https://www.icegl.cn/
 ![展示](https://icegl-1314935952.cos.ap-beijing.myqcloud.com/uploads/20230421/QQ20230421-121209.png)
