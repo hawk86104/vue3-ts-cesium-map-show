@@ -42,12 +42,6 @@ GIS地图部分，使用Cesium-1.82开源库，简单了修改了地图展示部
 ![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/index.png)
 ![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/config1.png)
 ![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/config2.png)
-![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/index截屏.gif)
-![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/line.gif)
-![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/mapimagery.gif)
-![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/modelsit.gif)
-![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/pointeffect.gif)
-![展示](https://jdvop.oss-cn-qingdao.aliyuncs.com/assets/img/3ddemo/titleset.gif)
 
 ## 安装依赖
 ```
